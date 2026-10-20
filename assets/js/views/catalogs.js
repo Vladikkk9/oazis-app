@@ -22,7 +22,7 @@ export function catalog({ id }) {
   const c = CATALOGS.find((x) => x.id === id);
   if (!c) return notFound();
   const objs = OBJECTS.filter((o) => objectCatalogs(o).includes(id));
-  const pages = Array.from({ length: c.pages }, (_, i) => `catalogs/${c.id}/p${String(i + 1).padStart(2, '0')}.jpg`);
+  const pages = Array.from({ length: c.pages }, (_, i) => `${c.dir}/p${String(i + 1).padStart(2, '0')}.jpg`);
 
   return {
     tab: 'catalogs',
