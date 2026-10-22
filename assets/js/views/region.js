@@ -1,11 +1,11 @@
 // Направление: все объекты региона из базы objects.js.
 
-import { AGENCY } from '../config/agency.js';
-import { OBJECTS } from '../config/objects.js';
-import { esc, plural } from '../core/ui.js';
-import { minPrice } from '../core/match.js';
-import { header, photo, objectCard } from './parts.js';
-import { notFound } from './catalogs.js';
+import { AGENCY } from '../config/agency.js?v=3';
+import { OBJECTS } from '../config/objects.js?v=3';
+import { esc, plural } from '../core/ui.js?v=3';
+import { minPrice } from '../core/match.js?v=3';
+import { header, photo, objectCard } from './parts.js?v=3';
+import { notFound } from './catalogs.js?v=3';
 
 const objectsOf = (r) =>
   OBJECTS.filter((o) => r.match.includes(o.region))

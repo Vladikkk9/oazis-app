@@ -1,9 +1,9 @@
-import { CATALOGS } from '../config/catalogs.js';
-import { OBJECTS } from '../config/objects.js';
-import { esc, icon } from '../core/ui.js';
-import { objectCatalogs, minPrice, fmtMln } from '../core/match.js';
-import { track, EVENTS } from '../core/analytics.js';
-import { header, photo, coverCard } from './parts.js';
+import { CATALOGS } from '../config/catalogs.js?v=3';
+import { OBJECTS } from '../config/objects.js?v=3';
+import { esc, icon } from '../core/ui.js?v=3';
+import { objectCatalogs, minPrice, fmtMln } from '../core/match.js?v=3';
+import { track, EVENTS } from '../core/analytics.js?v=3';
+import { header, photo, coverCard } from './parts.js?v=3';
 
 export function catalogs() {
   return {

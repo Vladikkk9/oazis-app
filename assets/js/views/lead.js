@@ -2,12 +2,12 @@
 // В Telegram главный путь — «Отправить с номером из Telegram» (одно нажатие),
 // ручной ввод остаётся запасным. В обычном браузере — классическая форма.
 
-import { AGENCY } from '../config/agency.js';
-import { APP } from '../config/app.js';
-import { buildLead, submitLead, normalizePhone } from '../core/lead.js';
-import { track, EVENTS } from '../core/analytics.js';
-import { tg } from '../core/tg.js';
-import { esc, icon, plural } from '../core/ui.js';
+import { AGENCY } from '../config/agency.js?v=3';
+import { APP } from '../config/app.js?v=3';
+import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=3';
+import { track, EVENTS } from '../core/analytics.js?v=3';
+import { tg } from '../core/tg.js?v=3';
+import { esc, icon, plural } from '../core/ui.js?v=3';
 
 const COPY = {
   quiz: (o) => ({

@@ -1,16 +1,16 @@
-import { tg } from './core/tg.js';
-import { track, EVENTS } from './core/analytics.js';
-import { icon, toast } from './core/ui.js';
-import { store } from './core/store.js';
-import { home } from './views/home.js';
-import { catalogs, catalog, notFound } from './views/catalogs.js';
-import { read } from './views/read.js';
-import { region } from './views/region.js';
-import { about } from './views/about.js';
-import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js';
-import { openLeadSheet, closeLeadSheet } from './views/lead.js';
-import { POSTS } from './config/posts.js';
-import { OBJECTS } from './config/objects.js';
+import { tg } from './core/tg.js?v=3';
+import { track, EVENTS } from './core/analytics.js?v=3';
+import { icon, toast } from './core/ui.js?v=3';
+import { store } from './core/store.js?v=3';
+import { home } from './views/home.js?v=3';
+import { catalogs, catalog, notFound } from './views/catalogs.js?v=3';
+import { read } from './views/read.js?v=3';
+import { region } from './views/region.js?v=3';
+import { about } from './views/about.js?v=3';
+import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=3';
+import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=3';
+import { POSTS } from './config/posts.js?v=3';
+import { OBJECTS } from './config/objects.js?v=3';
 
 const ROUTES = [
   [/^\/?$/, home, 'home'],

@@ -1,9 +1,9 @@
 // Заявки. Формирует данные в формате, готовом для Битрикс24 (crm.lead.add),
 // и отправляет их на ВАШ серверный прокси. В прототипе endpoint не задан → демо-режим.
 
-import { APP } from '../config/app.js';
-import { QUIZ } from '../config/quiz.js';
-import { tg } from './tg.js';
+import { APP } from '../config/app.js?v=3';
+import { QUIZ } from '../config/quiz.js?v=3';
+import { tg } from './tg.js?v=3';
 
 // Российские номера приводим к +7XXXXXXXXXX. intl: true — принимаем и зарубежные (номер из Telegram).
 export function normalizePhone(raw, { intl = false } = {}) {

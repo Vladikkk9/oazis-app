@@ -1,7 +1,7 @@
 // Демонстрационная аналитика. Персональные данные в события НЕ попадают:
 // любые поля из BLOCKED вырезаются перед записью.
 
-import { APP } from '../config/app.js';
+import { APP } from '../config/app.js?v=3';
 
 const BLOCKED = ['name', 'phone', 'email', 'username', 'first_name', 'last_name', 'user', 'initData'];
 const buffer = [];

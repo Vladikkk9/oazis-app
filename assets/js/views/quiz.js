@@ -1,14 +1,14 @@
-import { QUIZ } from '../config/quiz.js';
-import { OBJECTS, CATALOG_NAMES } from '../config/objects.js';
-import { store } from '../core/store.js';
-import { esc, icon, plural } from '../core/ui.js';
-import { tg } from '../core/tg.js';
-import { track, EVENTS } from '../core/analytics.js';
-import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js';
-import { objectCard, fineprint, header, photo, priceText } from './parts.js';
-import { openLeadSheet } from './lead.js';
-import { notFound } from './catalogs.js';
-import { promoFor } from '../config/promos.js';
+import { QUIZ } from '../config/quiz.js?v=3';
+import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=3';
+import { store } from '../core/store.js?v=3';
+import { esc, icon, plural } from '../core/ui.js?v=3';
+import { tg } from '../core/tg.js?v=3';
+import { track, EVENTS } from '../core/analytics.js?v=3';
+import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=3';
+import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=3';
+import { openLeadSheet } from './lead.js?v=3';
+import { notFound } from './catalogs.js?v=3';
+import { promoFor } from '../config/promos.js?v=3';
 
 // Фон квиза меняется от шага к шагу — живая подложка для стеклянных вариантов ответа.
 const QUIZ_BG = ['palazzo', 'leeprime', 'kp540', 'volna', 'kedry'];

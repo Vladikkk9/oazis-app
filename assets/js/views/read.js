@@ -1,6 +1,6 @@
-import { POSTS } from '../config/posts.js';
-import { AGENCY } from '../config/agency.js';
-import { header, postRow, postHero } from './parts.js';
+import { POSTS } from '../config/posts.js?v=3';
+import { AGENCY } from '../config/agency.js?v=3';
+import { header, postRow, postHero } from './parts.js?v=3';
 
 export function read() {
   const withImg = POSTS.filter((p) => p.image);
