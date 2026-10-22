@@ -5,12 +5,21 @@ import { APP } from '../config/app.js';
 import { QUIZ } from '../config/quiz.js';
 import { tg } from './tg.js';
 
-export function normalizePhone(raw) {
+// Российские номера приводим к +7XXXXXXXXXX. intl: true — принимаем и зарубежные (номер из Telegram).
+export function normalizePhone(raw, { intl = false } = {}) {
   let d = String(raw || '').replace(/\D/g, '');
-  if (d.length === 11 && (d[0] === '8' || d[0] === '7')) d = '7' + d.slice(1);
-  else if (d.length === 10) d = '7' + d;
-  return d.length === 11 ? `+${d}` : null;
+  if (d.length === 11 && (d[0] === '8' || d[0] === '7')) return `+7${d.slice(1)}`;
+  if (d.length === 10 && !intl) return `+7${d}`;
+  if (intl && d.length >= 8 && d.length <= 15) return `+${d}`;
+  return null;
 }
+
+const CONTEXT_TITLE = {
+  quiz: 'подборка по квизу',
+  object: 'запрос по объекту',
+  consultation: 'консультация',
+  viewing: 'онлайн-показ',
+};
 
 function answerLabels(answers) {
   return QUIZ.map((q) => {
@@ -19,7 +28,7 @@ function answerLabels(answers) {
   });
 }
 
-export function buildLead({ name, phone, answers = {}, objectIds = [], context = 'quiz' }) {
+export function buildLead({ name, phone, answers = {}, objectIds = [], context = 'quiz', phoneSource = 'manual', viewing = null }) {
   const createdAt = new Date().toISOString();
   const qa = answerLabels(answers);
   const tgUser = tg.user();
@@ -30,7 +39,9 @@ export function buildLead({ name, phone, answers = {}, objectIds = [], context =
     context, // quiz | object | consultation
     createdAt,
     name: name.trim(),
-    phone: normalizePhone(phone),
+    phone: normalizePhone(phone, { intl: true }),
+    phoneSource, // telegram — номер передан из аккаунта Telegram, manual — введён вручную
+    viewing, // { date: 'ГГГГ-ММ-ДД', time: 'ЧЧ:ММ', label, timezone } — только для онлайн-показа
     answers: qa,
     objectIds,
     telegram: tgUser ? { id: tgUser.id, username: tgUser.username || null } : null,
@@ -38,13 +49,15 @@ export function buildLead({ name, phone, answers = {}, objectIds = [], context =
 
     // Подсказка серверу, как разложить поля в Битрикс24
     bitrix: {
-      TITLE: `Mini App: ${context === 'quiz' ? 'подборка по квизу' : context === 'object' ? 'запрос по объекту' : 'консультация'}`,
+      TITLE: `Mini App: ${CONTEXT_TITLE[context] || context}`,
       NAME: name.trim(),
-      PHONE: [{ VALUE: normalizePhone(phone), VALUE_TYPE: 'MOBILE' }],
+      PHONE: [{ VALUE: normalizePhone(phone, { intl: true }), VALUE_TYPE: 'MOBILE' }],
       SOURCE_ID: 'UC_TG_MINIAPP', // создайте такой источник в Битрикс24
       SOURCE_DESCRIPTION: APP.lead.source,
       COMMENTS: [
-        ...qa.map((a) => `${a.question} — ${a.label}`),
+        viewing ? `Онлайн-показ: ${viewing.label} (${viewing.timezone}) — подтвердить с клиентом` : null,
+        `Телефон: ${phoneSource === 'telegram' ? 'передан из Telegram' : 'введён вручную'}`,
+        ...qa.filter((a) => a.value).map((a) => `${a.question} — ${a.label}`),
         objectIds.length ? `Объекты: ${objectIds.join(', ')}` : null,
         `Дата: ${createdAt}`,
       ].filter(Boolean).join('\n'),

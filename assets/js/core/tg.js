@@ -95,6 +95,30 @@ export const tg = {
     } catch { /* noop */ }
   },
 
+  // Номер телефона в одно нажатие (Bot API 6.9+). Telegram показывает системный диалог «Поделиться».
+  // Контакт также приходит боту сообщением — сервер может сверить номер.
+  canRequestContact() {
+    try {
+      return inside && typeof W.requestContact === 'function' && (!W.isVersionAtLeast || W.isVersionAtLeast('6.9'));
+    } catch {
+      return false;
+    }
+  },
+
+  requestContact() {
+    return new Promise((resolve) => {
+      if (!this.canRequestContact()) return resolve(null);
+      try {
+        W.requestContact((shared, res) => {
+          const c = res?.responseUnsafe?.contact;
+          resolve(shared && c?.phone_number ? { phone: c.phone_number, firstName: c.first_name || '' } : null);
+        });
+      } catch {
+        resolve(null);
+      }
+    });
+  },
+
   // Данные пользователя Telegram (без отправки куда-либо). Нужны только для будущей заявки.
   user() {
     return inside ? W.initDataUnsafe?.user || null : null;

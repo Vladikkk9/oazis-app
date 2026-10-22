@@ -10,6 +10,7 @@ import { about } from './views/about.js';
 import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js';
 import { openLeadSheet, closeLeadSheet } from './views/lead.js';
 import { POSTS } from './config/posts.js';
+import { OBJECTS } from './config/objects.js';
 
 const ROUTES = [
   [/^\/?$/, home, 'home'],
@@ -38,6 +39,8 @@ function quizEntry() {
 }
 
 function parse(hash) {
+  // Telegram при запуске кладёт в адрес служебные параметры (#tgWebAppData=…) — это главная.
+  if (/tgWebApp/.test(hash || '')) hash = '#/';
   const path = (hash || '#/').replace(/^#/, '').split('?')[0] || '/';
   for (const [re, view, name, keys = []] of ROUTES) {
     const m = path.match(re);
@@ -150,6 +153,16 @@ function render() {
 
 // Глобальное делегирование кликов
 document.addEventListener('click', (e) => {
+  const vb = e.target.closest('[data-viewing]');
+  if (vb) {
+    e.preventDefault();
+    const o = OBJECTS.find((x) => x.id === vb.dataset.viewing);
+    if (o) {
+      track(EVENTS.VIEWING_OPEN, { object: o.id, from: document.querySelector('main')?.dataset.route });
+      openLeadSheet({ context: 'viewing', answers: store.answers, objectIds: [o.id], objectName: o.name });
+    }
+    return;
+  }
   const promo = e.target.closest('[data-promo]');
   if (promo) track(EVENTS.PROMO_TAP, { promo: promo.dataset.promo });
   const el = e.target.closest('[data-open], [data-post], [data-action]');
@@ -204,6 +217,9 @@ function startRoute() {
   if (kind === 'post' && POSTS.some((x) => String(x.id) === id)) return '#/read';
   return null;
 }
+
+// telegram-web-app.js уже прочитал параметры запуска из адреса — убираем их, чтобы не мешали навигации.
+if (/tgWebApp/.test(location.hash)) history.replaceState(null, '', `${location.pathname}${location.search}#/`);
 
 tg.init();
 track(EVENTS.APP_OPEN, { inTelegram: tg.inside, platform: tg.raw?.platform || 'web' });

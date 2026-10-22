@@ -34,7 +34,7 @@ export function catalog({ id }) {
       <div class="panel glass-dark">
         <div>
           <h1 class="sr-only">${esc(c.title)}</h1>
-          <div class="t-h3" style="color:#fff">${c.pages} страниц · ${c.objectsCount} объектов</div>
+          <div class="t-h3" style="color:#fff">${c.objectsCount} объектов на ${c.pages} страницах</div>
           <p class="t-small">PDF доступен для скачивания</p>
         </div>
         <button class="circle glass-dark" data-action="pdf" aria-label="Скачать PDF">${icon('download')}</button>
@@ -50,7 +50,8 @@ export function catalog({ id }) {
       <div class="rail stagger">${objs.map((o, i) => `<a class="mini" href="#/object/${o.id}" style="--i:${i}">
         ${photo(o.image, '')}
         <div class="t">${esc(o.name)}</div>
-        <div class="s">${esc(o.region)} · ${o.prices[id] ? `от ${fmtMln(o.prices[id])}` : minPrice(o) ? `от ${fmtMln(minPrice(o))}` : 'цена по запросу'}</div>
+        <div class="s">${o.prices[id] ? `от ${fmtMln(o.prices[id])}` : minPrice(o) ? `от ${fmtMln(minPrice(o))}` : 'Цена по запросу'}</div>
+        <div class="s">${esc(o.region)}</div>
       </a>`).join('')}</div>
     </section>` : ''}
 

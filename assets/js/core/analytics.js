@@ -31,6 +31,8 @@ export const EVENTS = {
   LEAD_SUBMIT: 'lead_submit',
   CONTACT_TAP: 'contact_tap',
   PROMO_TAP: 'promo_tap',
+  VIEWING_OPEN: 'viewing_open',
+  CONTACT_SHARE: 'contact_share',
 };
 
 export function track(event, props = {}) {

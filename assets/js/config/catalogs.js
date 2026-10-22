@@ -19,7 +19,7 @@ export const CATALOGS = [
   {
     id: 'krasnaya-polyana',
     title: 'Красная Поляна',
-    subtitle: 'Горы Сочи · осень 2026',
+    subtitle: 'Горы Сочи, осень 2026',
     description: 'Объекты Красной Поляны, Розы Хутор и Эсто-Садка: сервисные апартаменты у подъёмников и готовые проекты.',
     tags: ['Горы', 'Роза Хутор', 'Эсто-Садок'],
     cover: 'assets/img/covers/krasnaya-polyana.jpg',

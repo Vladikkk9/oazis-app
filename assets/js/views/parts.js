@@ -1,7 +1,6 @@
 // Переиспользуемые куски разметки.
 
 import { esc, icon, fmtDate } from '../core/ui.js';
-import { tg } from '../core/tg.js';
 import { minPrice, fmtMln, TYPE_LABEL, hasPriceConflict } from '../core/match.js';
 import { APP } from '../config/app.js';
 import { promoFor } from '../config/promos.js';
@@ -12,7 +11,7 @@ export const photo = (src, alt = '', { eager = false, cls = '' } = {}) =>
 
 // Плавающая шапка: стеклянные кнопки, заголовок проявляется при прокрутке.
 export function header({ title = '', back = true, right = '', left = '' } = {}) {
-  const showBack = back && !tg.inside; // в Telegram — системная кнопка «Назад»
+  const showBack = back; // своя кнопка «Назад» видна всегда, системная Telegram-кнопка дублирует её
   const l = left || (showBack ? `<button class="circle glass" data-action="back" aria-label="Назад">${icon('arrowL')}</button>` : '<span class="spacer"></span>');
   return `<header class="header" data-header>
     ${l}
@@ -30,7 +29,7 @@ export function coverCard(c, i = 0) {
 }
 
 export function postRow(p, i = 0) {
-  const meta = [p.topic, p.date ? fmtDate(p.date) : null].filter(Boolean).join(' · ');
+  const meta = [p.topic, p.date ? fmtDate(p.date) : null].filter(Boolean).join(', ');
   return `<button class="row-item" data-post="${p.id}" data-url="${esc(p.url)}" style="--i:${i}">
     <div>
       <div class="t-h3">${esc(p.title)}${p.placeholder ? '<span class="tag-draft">черновик</span>' : ''}</div>
@@ -45,7 +44,7 @@ export function postHero(p) {
     ${photo(p.image, '')}
     <div class="panel glass-dark">
       <div class="t-h3">${esc(p.title)}</div>
-      <div class="meta">${esc(p.topic)}${p.date ? ` · ${fmtDate(p.date)}` : ''} · Telegram</div>
+      <div class="meta">${esc(p.topic)}${p.date ? `, ${fmtDate(p.date)}` : ''}</div>
     </div>
   </button>`;
 }
@@ -70,13 +69,16 @@ export function objectCard(o, reasons = [], { near = false, i = 0 } = {}) {
       <div class="panel glass-dark">
         <div class="t-h2">${esc(o.name)}</div>
         <div class="loc">${esc(o.location)}</div>
-        <div class="price">${priceText(o)}${hasPriceConflict(o) ? ' <small>· цена различается в каталогах</small>' : ''}</div>
+        <div class="price">${priceText(o)}</div>${hasPriceConflict(o) ? '<div class="loc">цена в каталогах различается</div>' : ''}
       </div>
     </a>
     <div class="body">
       ${specs(o)}
       ${reasons.length ? `<ul class="why">${reasons.slice(0, 4).map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}
-      <div class="actions"><a class="btn btn-tinted" href="#/object/${o.id}" data-object-view="${o.id}">Подробнее</a></div>
+      <div class="actions two">
+        <a class="btn btn-tinted" href="#/object/${o.id}" data-object-view="${o.id}">Подробнее</a>
+        <button class="btn btn-tinted" data-viewing="${o.id}">${icon('video')} Видеопоказ</button>
+      </div>
     </div>
   </article>`;
 }

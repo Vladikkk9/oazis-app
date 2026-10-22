@@ -49,7 +49,7 @@ export function home() {
           ${photo(o.image, '')}
           <div class="panel glass-dark">
             <b>${esc(p.title)}</b>
-            <span>${esc(o.name)} · ${esc(o.region)}</span>
+            <span>${esc(o.name)}, ${esc(o.region)}</span>
           </div>
         </a>`;
       }).join('')}</div>

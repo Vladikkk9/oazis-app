@@ -169,7 +169,7 @@ export function results() {
     .map((h, i) => `<button class="lcard" data-hidden="${h.kind}" style="--i:${i}" aria-label="${esc(h.text)}. Открыть в полной подборке">
       ${photo(h.o.image, '')}
       <span class="lock glass-dark">${icon('lock', 'ic-sm')}</span>
-      <div class="panel glass-dark"><b>${esc(h.text)}</b><span>${esc(h.o.region)} · ${esc(TYPE_LABEL[h.o.type])}</span></div>
+      <div class="panel glass-dark"><b>${esc(h.text)}</b><span>${esc(TYPE_LABEL[h.o.type])}, ${esc(h.o.region)}</span></div>
     </button>`)
     .join('');
 
@@ -252,7 +252,8 @@ export function objectView({ id }) {
   const cats = objectCatalogs(o);
   const area = o.area?.[0] ? `${o.area[0]}${o.area[1] ? `–${o.area[1]}` : '+'} м²` : '—';
   const promo = promoFor(o.id);
-  const kicker = [o.type ? TYPE_LABEL[o.type] : null, o.class, o.region].filter(Boolean).join(' · ');
+  const CLASS_GEN = { 'Премиум': 'премиум-класса', 'Бизнес': 'бизнес-класса', 'Комфорт': 'комфорт-класса', 'Элит': 'элит-класса' };
+  const kicker = [o.type ? TYPE_LABEL[o.type] : o.format, CLASS_GEN[o.class]].filter(Boolean).join(' ');
 
   return {
     hideNav: true,
@@ -284,7 +285,8 @@ export function objectView({ id }) {
       ${(o.conflicts || []).map((c) => `<div class="note">${esc(c)} — уточняем у застройщика.</div>`).join('')}
 
       <div class="mt-24" style="display:grid;gap:10px">
-        <button class="btn btn-primary btn-block" data-action="lead">Запросить планировки и цены</button>
+        <button class="btn btn-primary btn-block" data-viewing="${o.id}">${icon('video')} Показать по видеосвязи</button>
+        <button class="btn btn-tinted btn-block" data-action="lead">Запросить планировки и цены</button>
         ${cats.map((cid) => `<a class="btn btn-tinted btn-block" href="#/catalog/${cid}">Каталог «${esc(CATALOG_NAMES[cid])}»</a>`).join('')}
       </div>
     </div>
