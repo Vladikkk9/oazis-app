@@ -32,7 +32,7 @@ export default {
     // 2. Минимальная валидация
     const name = String(lead.name || '').trim().slice(0, 60);
     const phone = String(lead.phone || '');
-    if (name.length < 2 || !/^\+7\d{10}$/.test(phone)) return json({ ok: false, error: 'invalid' }, 422, cors);
+    if (name.length < 2 || !/^\+\d{8,15}$/.test(phone)) return json({ ok: false, error: 'invalid' }, 422, cors);
 
     // 3. Создаём лид в Битрикс24
     const b = lead.bitrix || {};
