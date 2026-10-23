@@ -1,8 +1,8 @@
-import { CATALOGS } from '../config/catalogs.js?v=6';
-import { esc, icon } from '../core/ui.js?v=6';
-import { catalogAccess } from '../core/store.js?v=6';
-import { track, EVENTS } from '../core/analytics.js?v=6';
-import { header, photo, coverCard } from './parts.js?v=6';
+import { CATALOGS } from '../config/catalogs.js?v=7';
+import { esc, icon, scroller } from '../core/ui.js?v=7';
+import { catalogAccess } from '../core/store.js?v=7';
+import { track, EVENTS } from '../core/analytics.js?v=7';
+import { header, photo, coverCard } from './parts.js?v=7';
 
 export function catalogs() {
   return {
@@ -90,7 +90,7 @@ export function catalog({ id }) {
         pct.textContent = `${Math.round(p * 100)}%`;
         pct.classList.toggle('on', inside);
       };
-      window.addEventListener('scroll', onScroll, { passive: true });
+      scroller().addEventListener('scroll', onScroll, { passive: true });
       root.querySelector('[data-action="scroll-reader"]').addEventListener('click', () => {
         root.querySelector('#reader-start').scrollIntoView({ behavior: 'smooth' });
       });
@@ -98,7 +98,7 @@ export function catalog({ id }) {
         track(EVENTS.CATALOG_PDF, { catalog: c.id });
         open(new URL(c.pdf, location.href).href);
       });
-      return () => { window.removeEventListener('scroll', onScroll); io?.disconnect(); };
+      return () => { scroller().removeEventListener('scroll', onScroll); io?.disconnect(); };
     },
   };
 }

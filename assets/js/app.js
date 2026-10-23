@@ -1,16 +1,16 @@
-import { tg } from './core/tg.js?v=6';
-import { track, EVENTS, initMetrika } from './core/analytics.js?v=6';
-import { icon, toast } from './core/ui.js?v=6';
-import { store } from './core/store.js?v=6';
-import { home } from './views/home.js?v=6';
-import { catalogs, catalog, notFound } from './views/catalogs.js?v=6';
-import { read } from './views/read.js?v=6';
-import { about } from './views/about.js?v=6';
-import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=6';
-import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=6';
-import { POSTS } from './config/posts.js?v=6';
-import { OBJECTS } from './config/objects.js?v=6';
-import { CATALOGS } from './config/catalogs.js?v=6';
+import { tg } from './core/tg.js?v=7';
+import { track, EVENTS, initMetrika } from './core/analytics.js?v=7';
+import { icon, toast } from './core/ui.js?v=7';
+import { store } from './core/store.js?v=7';
+import { home } from './views/home.js?v=7';
+import { catalogs, catalog, notFound } from './views/catalogs.js?v=7';
+import { read } from './views/read.js?v=7';
+import { about } from './views/about.js?v=7';
+import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=7';
+import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=7';
+import { POSTS } from './config/posts.js?v=7';
+import { OBJECTS } from './config/objects.js?v=7';
+import { CATALOGS } from './config/catalogs.js?v=7';
 
 const ROUTES = [
   [/^\/?$/, home, 'home'],
@@ -96,7 +96,7 @@ function renderNav(tab, hidden) {
 // Шапка становится стеклянной, когда контент уходит под неё.
 function syncHeader() {
   const h = document.querySelector('[data-header]');
-  if (h) h.classList.toggle('scrolled', window.scrollY > 120);
+  if (h) h.classList.toggle('scrolled', app.scrollTop > 120);
 }
 
 // Фото: проявляем после загрузки (событие load не всплывает — ловим на захвате).
@@ -112,8 +112,13 @@ function markLoaded(root) {
   root.querySelectorAll('.ph img').forEach((img) => { if (img.complete) img.closest('.ph').classList.add('ready'); });
 }
 
+let shownHash = null;
+
 function render() {
   const hash = location.hash || '#/';
+  // Запоминаем позицию прокрутки уходящего экрана — чтобы «Назад» вернул на то же место.
+  if (shownHash) scrollMemory.set(shownHash, app.scrollTop);
+  shownHash = hash;
 
   // Наш собственный стек — чтобы понимать, есть ли куда возвращаться.
   if (replacing) { stack[stack.length - 1] = hash; replacing = false; }
@@ -136,7 +141,7 @@ function render() {
 
   const prevY = scrollMemory.get(hash);
   app.innerHTML = `<main class="view ${v.cls || ''} ${v.hideNav ? 'no-nav' : ''}" data-route="${name}">${v.html}</main>`;
-  window.scrollTo(0, prevY && name !== 'quiz_step' ? prevY : 0);
+  app.scrollTo(0, prevY && name !== 'quiz_step' ? prevY : 0);
 
   renderNav(v.tab, Boolean(v.hideNav));
   // Системная кнопка Telegram «Назад»: на вкладках ведёт на главную, на внутренних экранах — на шаг назад.
@@ -209,7 +214,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-window.addEventListener('scroll', () => { scrollMemory.set(location.hash || '#/', window.scrollY); syncHeader(); }, { passive: true });
+app.addEventListener('scroll', syncHeader, { passive: true });
 window.addEventListener('hashchange', render);
 window.addEventListener('offline', () => toast('Нет соединения — часть изображений может не загрузиться'));
 

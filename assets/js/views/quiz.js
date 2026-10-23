@@ -1,15 +1,15 @@
-import { QUIZ } from '../config/quiz.js?v=6';
-import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=6';
-import { store } from '../core/store.js?v=6';
-import { esc, icon, plural } from '../core/ui.js?v=6';
-import { tg } from '../core/tg.js?v=6';
-import { track, EVENTS } from '../core/analytics.js?v=6';
-import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=6';
-import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=6';
-import { openLeadSheet } from './lead.js?v=6';
-import { notFound } from './catalogs.js?v=6';
-import { CATALOGS } from '../config/catalogs.js?v=6';
-import { promoFor } from '../config/promos.js?v=6';
+import { QUIZ } from '../config/quiz.js?v=7';
+import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=7';
+import { store } from '../core/store.js?v=7';
+import { esc, icon, plural, scroller } from '../core/ui.js?v=7';
+import { tg } from '../core/tg.js?v=7';
+import { track, EVENTS } from '../core/analytics.js?v=7';
+import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=7';
+import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=7';
+import { openLeadSheet } from './lead.js?v=7';
+import { notFound } from './catalogs.js?v=7';
+import { CATALOGS } from '../config/catalogs.js?v=7';
+import { promoFor } from '../config/promos.js?v=7';
 
 // Фон квиза меняется от шага к шагу — живая подложка для стеклянных вариантов ответа.
 const QUIZ_BG = ['palazzo', 'leeprime', 'kp540', 'volna', 'kedry'];
@@ -239,10 +239,10 @@ export function results() {
       const offer = root.querySelector('.offer');
       const onScroll = () => {
         const r = offer.getBoundingClientRect();
-        sticky.classList.toggle('away', window.scrollY < 300 || (r.top < window.innerHeight && r.bottom > 0));
+        sticky.classList.toggle('away', scroller().scrollTop < 300 || (r.top < window.innerHeight && r.bottom > 0));
       };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      return () => window.removeEventListener('scroll', onScroll);
+      scroller().addEventListener('scroll', onScroll, { passive: true });
+      return () => scroller().removeEventListener('scroll', onScroll);
     },
   };
 }

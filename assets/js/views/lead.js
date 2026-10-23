@@ -2,13 +2,13 @@
 // В Telegram главный путь — «Отправить с номером из Telegram» (одно нажатие),
 // ручной ввод остаётся запасным. В обычном браузере — классическая форма.
 
-import { AGENCY } from '../config/agency.js?v=6';
-import { APP } from '../config/app.js?v=6';
-import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=6';
-import { track, EVENTS } from '../core/analytics.js?v=6';
-import { tg } from '../core/tg.js?v=6';
-import { catalogAccess } from '../core/store.js?v=6';
-import { esc, icon, plural } from '../core/ui.js?v=6';
+import { AGENCY } from '../config/agency.js?v=7';
+import { APP } from '../config/app.js?v=7';
+import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=7';
+import { track, EVENTS } from '../core/analytics.js?v=7';
+import { tg } from '../core/tg.js?v=7';
+import { catalogAccess } from '../core/store.js?v=7';
+import { esc, icon, plural, scroller } from '../core/ui.js?v=7';
 
 const COPY = {
   quiz: (o) => ({
@@ -97,7 +97,7 @@ export function closeLeadSheet() {
   current = null;
   el.classList.add('closing');
   setTimeout(() => el.remove(), 220);
-  document.body.style.overflow = '';
+  scroller().style.overflow = '';
 }
 
 export function openLeadSheet(opts) {
@@ -161,7 +161,7 @@ export function openLeadSheet(opts) {
       </form>
     </div>`;
   document.body.appendChild(root);
-  document.body.style.overflow = 'hidden';
+  scroller().style.overflow = 'hidden';
   current = root;
 
   const form = root.querySelector('form');

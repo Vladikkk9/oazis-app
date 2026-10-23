@@ -1,5 +1,9 @@
 // Мелкие утилиты интерфейса и набор SVG-иконок (стиль Lucide, stroke 1.6).
 
+// Приложение прокручивается внутри #app, а не всей страницей:
+// на iPhone в Telegram так закреплённые шапка и меню не «отрываются» при прокрутке.
+export const scroller = () => document.getElementById('app');
+
 export const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
