@@ -1,8 +1,8 @@
 // Подбор объектов по ответам квиза.
 // Принципы: только факты из каталогов; если совпадений мало — показываем меньше, а не придумываем.
 
-import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=7';
-import { QUIZ } from '../config/quiz.js?v=7';
+import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=9';
+import { QUIZ } from '../config/quiz.js?v=9';
 
 export const TYPE_LABEL = { flat: 'Квартира', apartments: 'Апартаменты', null: 'Формат уточняется' };
 

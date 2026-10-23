@@ -1,16 +1,16 @@
-import { tg } from './core/tg.js?v=7';
-import { track, EVENTS, initMetrika } from './core/analytics.js?v=7';
-import { icon, toast } from './core/ui.js?v=7';
-import { store } from './core/store.js?v=7';
-import { home } from './views/home.js?v=7';
-import { catalogs, catalog, notFound } from './views/catalogs.js?v=7';
-import { read } from './views/read.js?v=7';
-import { about } from './views/about.js?v=7';
-import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=7';
-import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=7';
-import { POSTS } from './config/posts.js?v=7';
-import { OBJECTS } from './config/objects.js?v=7';
-import { CATALOGS } from './config/catalogs.js?v=7';
+import { tg } from './core/tg.js?v=9';
+import { track, EVENTS, initMetrika } from './core/analytics.js?v=9';
+import { icon, toast } from './core/ui.js?v=9';
+import { store } from './core/store.js?v=9';
+import { home } from './views/home.js?v=9';
+import { catalogs, catalog, notFound } from './views/catalogs.js?v=9';
+import { read } from './views/read.js?v=9';
+import { about } from './views/about.js?v=9';
+import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=9';
+import { openLeadSheet, closeLeadSheet, openCatalogSheet } from './views/lead.js?v=9';
+import { POSTS } from './config/posts.js?v=9';
+import { OBJECTS } from './config/objects.js?v=9';
+import { CATALOGS } from './config/catalogs.js?v=9';
 
 const ROUTES = [
   [/^\/?$/, home, 'home'],
@@ -96,7 +96,8 @@ function renderNav(tab, hidden) {
 // Шапка становится стеклянной, когда контент уходит под неё.
 function syncHeader() {
   const h = document.querySelector('[data-header]');
-  if (h) h.classList.toggle('scrolled', app.scrollTop > 120);
+  const limit = document.querySelector('main .page-head') ? 8 : 120; // экраны без большого фото
+  if (h) h.classList.toggle('scrolled', app.scrollTop > limit);
 }
 
 // Фото: проявляем после загрузки (событие load не всплывает — ловим на захвате).
@@ -167,13 +168,23 @@ document.addEventListener('click', (e) => {
     }
     return;
   }
+  const ci = e.target.closest('[data-catalog-info]');
+  if (ci) {
+    e.preventDefault();
+    const c = CATALOGS.find((x) => x.id === ci.dataset.catalogInfo);
+    if (c) {
+      track(EVENTS.CATALOG_OPEN, { catalog: c.id, from: 'cover' });
+      openCatalogSheet(c);
+    }
+    return;
+  }
   const ub = e.target.closest('[data-unlock]');
   if (ub) {
     e.preventDefault();
     const c = CATALOGS.find((x) => x.id === ub.dataset.unlock);
     if (c) {
       track(EVENTS.CATALOG_UNLOCK_OPEN, { catalog: c.id });
-      openLeadSheet({ context: 'catalog', catalogId: c.id, catalogTitle: c.title, answers: store.answers, objectIds: [] });
+      openLeadSheet({ context: 'catalog', catalogId: c.id, catalogTitle: c.title, catalogPdf: c.pdf, answers: store.answers, objectIds: [] });
     }
     return;
   }

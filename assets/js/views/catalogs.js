@@ -1,8 +1,8 @@
-import { CATALOGS } from '../config/catalogs.js?v=7';
-import { esc, icon, scroller } from '../core/ui.js?v=7';
-import { catalogAccess } from '../core/store.js?v=7';
-import { track, EVENTS } from '../core/analytics.js?v=7';
-import { header, photo, coverCard } from './parts.js?v=7';
+import { CATALOGS } from '../config/catalogs.js?v=9';
+import { esc, icon, scroller } from '../core/ui.js?v=9';
+import { catalogAccess } from '../core/store.js?v=9';
+import { track, EVENTS } from '../core/analytics.js?v=9';
+import { header, photo, coverCard } from './parts.js?v=9';
 
 export function catalogs() {
   return {
@@ -11,7 +11,7 @@ export function catalogs() {
     ${header({ title: 'Каталоги', home: true })}
     <div class="page-head">
       <h1 class="t-title">Каталоги</h1>
-      <p class="t-body">«ТОП-10 Сочи» открыт сразу. Остальные каталоги пришлём после короткой заявки — вместе с актуальными ценами.</p>
+      <p class="t-body">Нажмите на каталог, чтобы узнать, что внутри. Скачать его можно после короткой заявки.</p>
     </div>
     <div class="cat-grid stagger mt-24">${CATALOGS.map(coverCard).join('')}</div>`,
   };
@@ -109,20 +109,20 @@ function lockedCatalog(c) {
     back: true,
     html: `
     ${header({ title: c.title })}
-    <section class="cat-hero is-locked">
+    <section class="cat-hero">
       ${photo(c.cover, `Обложка каталога «${c.title}»`, { eager: true })}
       <div class="panel glass-dark">
         <div>
           <h1 class="sr-only">${esc(c.title)}</h1>
           <div class="t-h3" style="color:#fff">${c.objectsCount} объектов на ${c.pages} страницах</div>
-          <p class="t-small">Откроется после заявки</p>
+          <p class="t-small">Доступен после заявки</p>
         </div>
         <span class="circle glass-dark" aria-hidden="true">${icon('lock')}</span>
       </div>
     </section>
     <div class="wrap mt-16">
       <p class="t-body">${esc(c.description)}</p>
-      <button class="btn btn-primary btn-block mt-16" data-unlock="${c.id}">Открыть каталог</button>
+      <button class="btn btn-primary btn-block mt-16" data-unlock="${c.id}">${icon('download')} Скачать каталог</button>
     </div>`,
   };
 }

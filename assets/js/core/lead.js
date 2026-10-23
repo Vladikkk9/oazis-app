@@ -1,10 +1,10 @@
 // Заявки. Формирует данные в формате, готовом для Битрикс24 (crm.lead.add),
 // и отправляет их на ВАШ серверный прокси. В прототипе endpoint не задан → демо-режим.
 
-import { APP } from '../config/app.js?v=7';
-import { QUIZ } from '../config/quiz.js?v=7';
-import { tg } from './tg.js?v=7';
-import { OBJECTS } from '../config/objects.js?v=7';
+import { APP } from '../config/app.js?v=9';
+import { QUIZ } from '../config/quiz.js?v=9';
+import { tg } from './tg.js?v=9';
+import { OBJECTS } from '../config/objects.js?v=9';
 
 // Российские номера приводим к +7XXXXXXXXXX. intl: true — принимаем и зарубежные (номер из Telegram).
 export function normalizePhone(raw, { intl = false } = {}) {
@@ -54,7 +54,7 @@ export function buildLead({ name, phone, answers = {}, objectIds = [], context =
       TITLE: `Mini App: ${CONTEXT_TITLE[context] || context}`,
       NAME: name.trim(),
       PHONE: [{ VALUE: normalizePhone(phone, { intl: true }), VALUE_TYPE: 'MOBILE' }],
-      SOURCE_ID: 'UC_TG_MINIAPP', // создайте такой источник в Битрикс24
+      SOURCE_ID: 'WEB', // сервер подставит свой код источника из BITRIX_SOURCE_ID
       SOURCE_DESCRIPTION: APP.lead.source,
       COMMENTS: [
         note,

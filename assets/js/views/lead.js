@@ -2,13 +2,13 @@
 // В Telegram главный путь — «Отправить с номером из Telegram» (одно нажатие),
 // ручной ввод остаётся запасным. В обычном браузере — классическая форма.
 
-import { AGENCY } from '../config/agency.js?v=7';
-import { APP } from '../config/app.js?v=7';
-import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=7';
-import { track, EVENTS } from '../core/analytics.js?v=7';
-import { tg } from '../core/tg.js?v=7';
-import { catalogAccess } from '../core/store.js?v=7';
-import { esc, icon, plural, scroller } from '../core/ui.js?v=7';
+import { AGENCY } from '../config/agency.js?v=9';
+import { APP } from '../config/app.js?v=9';
+import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=9';
+import { track, EVENTS } from '../core/analytics.js?v=9';
+import { tg } from '../core/tg.js?v=9';
+import { catalogAccess } from '../core/store.js?v=9';
+import { esc, icon, plural, scroller } from '../core/ui.js?v=9';
 
 const COPY = {
   quiz: (o) => ({
@@ -28,8 +28,8 @@ const COPY = {
   }),
   catalog: (o) => ({
     title: `Каталог «${o.catalogTitle}»`,
-    text: 'Откроем каталог сразу после заявки, а менеджер пришлёт актуальные цены.',
-    button: 'Открыть каталог',
+    text: 'Каталог станет доступен сразу после заявки, а менеджер пришлёт актуальные цены.',
+    button: 'Скачать каталог',
   }),
   viewing: (o) => ({
     title: 'Онлайн-показ',
@@ -89,6 +89,43 @@ function formatPhoneInput(v) {
   if (p[2]) s += `-${p[2]}`;
   if (p[3]) s += `-${p[3]}`;
   return s;
+}
+
+// Шторка «Что внутри каталога»: обложка, состав и кнопка «Скачать каталог» → обычная форма заявки.
+export function openCatalogSheet(c) {
+  closeLeadSheet();
+  const open = catalogAccess.isOpen(c);
+  const root = document.createElement('div');
+  root.className = 'sheet-root';
+  root.innerHTML = `
+    <div class="sheet-scrim" data-close></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cat-title">
+      <div class="grabber" aria-hidden="true"></div>
+      <div class="head">
+        <h2 class="t-h2" id="cat-title">${esc(c.title)}</h2>
+        <button class="circle" data-close aria-label="Закрыть">${icon('close')}</button>
+      </div>
+      <div class="cat-info">
+        <div class="ph ready"><img src="${c.cover}" alt="Обложка каталога «${esc(c.title)}»"></div>
+        <div>
+          <p class="t-sub" style="margin:0">${esc(c.description)}</p>
+          <div class="meta">${c.objectsCount} объектов, ${c.pages} страниц</div>
+        </div>
+      </div>
+      <ul class="inside">${(c.inside || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      <button class="btn btn-primary btn-block mt-16" data-download>${icon('download')} Скачать каталог</button>
+      ${open ? `<a class="btn btn-plain btn-block mt-8" href="#/catalog/${c.id}" data-read>Читать в приложении</a>` : ''}
+    </div>`;
+  document.body.appendChild(root);
+  scroller().style.overflow = 'hidden';
+  current = root;
+  root.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeLeadSheet));
+  root.querySelector('[data-read]')?.addEventListener('click', closeLeadSheet);
+  root.querySelector('[data-download]').addEventListener('click', () => {
+    track(EVENTS.LEAD_FORM_OPEN, { from: 'catalog_sheet', catalog: c.id });
+    openLeadSheet({ context: 'catalog', catalogId: c.id, catalogTitle: c.title, catalogPdf: c.pdf, answers: {}, objectIds: [] });
+  });
+  root.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLeadSheet(); });
 }
 
 export function closeLeadSheet() {
@@ -316,9 +353,9 @@ function renderSuccess(root, res, lead, opts = {}) {
   delete preview.initData;
   const v = lead.viewing;
   const isCatalog = Boolean(opts.catalogId);
-  const title = isCatalog ? 'Каталог открыт' : v ? (res.demo ? 'Запись на показ сформирована' : 'Вы записаны на показ') : res.demo ? 'Заявка сформирована' : 'Заявка отправлена';
+  const title = isCatalog ? 'Каталог доступен' : v ? (res.demo ? 'Запись на показ сформирована' : 'Вы записаны на показ') : res.demo ? 'Заявка сформирована' : 'Заявка отправлена';
   const sub = isCatalog
-    ? 'Менеджер пришлёт актуальные цены и свободные лоты.'
+    ? 'Скачайте PDF или читайте прямо в приложении. Менеджер пришлёт актуальные цены.'
     : v
     ? `${v.label} по Москве. Менеджер подтвердит время и пришлёт ссылку.`
     : res.demo ? 'Так будет выглядеть подтверждение после подключения CRM.' : 'Менеджер свяжется с вами в рабочее время.';
@@ -332,7 +369,8 @@ function renderSuccess(root, res, lead, opts = {}) {
       ${res.demo ? `<div class="demo-note"><span><b>Демо-режим:</b> заявка не отправлена, CRM ещё не подключена. Чтобы связаться сейчас, напишите менеджеру.</span></div>
       <details class="payload"><summary>Что уйдёт в CRM после подключения</summary><pre>${esc(JSON.stringify(preview, null, 2))}</pre></details>` : ''}
       <div style="display:grid;gap:10px;margin-top:18px">
-        ${isCatalog ? `<a class="btn btn-primary btn-block" href="#/catalog/${opts.catalogId}" data-open-catalog>Открыть каталог</a>` : ''}
+        ${isCatalog ? `<button class="btn btn-primary btn-block" data-pdf>${icon('download')} Скачать PDF</button>
+        <a class="btn btn-tinted btn-block" href="#/catalog/${opts.catalogId}" data-open-catalog>Читать в приложении</a>` : ''}
         <button class="btn ${isCatalog ? 'btn-tinted' : 'btn-primary'} btn-block" data-tg>Написать менеджеру</button>
         <button class="btn btn-tinted btn-block" data-close>Вернуться</button>
       </div>
@@ -340,6 +378,10 @@ function renderSuccess(root, res, lead, opts = {}) {
   sheet.querySelector('[data-close]').addEventListener('click', () => {
     closeLeadSheet();
     if (isCatalog) window.dispatchEvent(new HashChangeEvent('hashchange')); // перерисовать: замок снят
+  });
+  sheet.querySelector('[data-pdf]')?.addEventListener('click', () => {
+    track(EVENTS.CATALOG_PDF, { catalog: opts.catalogId, from: 'lead_success' });
+    tg.open(new URL(opts.catalogPdf, location.href).href);
   });
   sheet.querySelector('[data-open-catalog]')?.addEventListener('click', () => {
     closeLeadSheet();

@@ -11,7 +11,7 @@
 // rooms:  null, если количество комнат в каталоге не указано.
 // conflicts: расхождения между каталогами, которые показываем честно.
 
-import { PUBLIC } from './public.js?v=7';
+import { PUBLIC } from './public.js?v=9';
 
 export const OBJECTS = [
   // ——— АЛТАЙ ———
