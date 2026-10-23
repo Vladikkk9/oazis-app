@@ -1,15 +1,15 @@
-import { QUIZ } from '../config/quiz.js?v=10';
-import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=10';
-import { store } from '../core/store.js?v=10';
-import { esc, icon, plural, scroller } from '../core/ui.js?v=10';
-import { tg } from '../core/tg.js?v=10';
-import { track, EVENTS } from '../core/analytics.js?v=10';
-import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=10';
-import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=10';
-import { openLeadSheet } from './lead.js?v=10';
-import { notFound } from './catalogs.js?v=10';
-import { CATALOGS } from '../config/catalogs.js?v=10';
-import { promoFor } from '../config/promos.js?v=10';
+import { QUIZ } from '../config/quiz.js?v=12';
+import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=12';
+import { store } from '../core/store.js?v=12';
+import { esc, icon, plural, scroller } from '../core/ui.js?v=12';
+import { tg } from '../core/tg.js?v=12';
+import { track, EVENTS } from '../core/analytics.js?v=12';
+import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=12';
+import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=12';
+import { openLeadSheet } from './lead.js?v=12';
+import { notFound } from './catalogs.js?v=12';
+import { CATALOGS } from '../config/catalogs.js?v=12';
+import { promoFor } from '../config/promos.js?v=12';
 
 // Фон квиза меняется от шага к шагу — живая подложка для стеклянных вариантов ответа.
 const QUIZ_BG = ['palazzo', 'leeprime', 'kp540', 'volna', 'kedry'];

@@ -1,16 +1,16 @@
-import { tg } from './core/tg.js?v=10';
-import { track, EVENTS, initMetrika } from './core/analytics.js?v=10';
-import { icon, toast } from './core/ui.js?v=10';
-import { store } from './core/store.js?v=10';
-import { home } from './views/home.js?v=10';
-import { catalogs, catalog, notFound } from './views/catalogs.js?v=10';
-import { read } from './views/read.js?v=10';
-import { about } from './views/about.js?v=10';
-import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=10';
-import { openLeadSheet, closeLeadSheet, openCatalogSheet } from './views/lead.js?v=10';
-import { POSTS } from './config/posts.js?v=10';
-import { OBJECTS } from './config/objects.js?v=10';
-import { CATALOGS } from './config/catalogs.js?v=10';
+import { tg } from './core/tg.js?v=12';
+import { track, EVENTS, initMetrika } from './core/analytics.js?v=12';
+import { icon, toast } from './core/ui.js?v=12';
+import { store } from './core/store.js?v=12';
+import { home } from './views/home.js?v=12';
+import { catalogs, catalog, notFound } from './views/catalogs.js?v=12';
+import { read } from './views/read.js?v=12';
+import { about } from './views/about.js?v=12';
+import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=12';
+import { openLeadSheet, closeLeadSheet, openCatalogSheet } from './views/lead.js?v=12';
+import { POSTS } from './config/posts.js?v=12';
+import { OBJECTS } from './config/objects.js?v=12';
+import { CATALOGS } from './config/catalogs.js?v=12';
 
 const ROUTES = [
   [/^\/?$/, home, 'home'],

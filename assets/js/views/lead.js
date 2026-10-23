@@ -2,13 +2,13 @@
 // В Telegram главный путь — «Отправить с номером из Telegram» (одно нажатие),
 // ручной ввод остаётся запасным. В обычном браузере — классическая форма.
 
-import { AGENCY } from '../config/agency.js?v=10';
-import { APP } from '../config/app.js?v=10';
-import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=10';
-import { track, EVENTS } from '../core/analytics.js?v=10';
-import { tg } from '../core/tg.js?v=10';
-import { catalogAccess } from '../core/store.js?v=10';
-import { esc, icon, plural, scroller } from '../core/ui.js?v=10';
+import { AGENCY } from '../config/agency.js?v=12';
+import { APP } from '../config/app.js?v=12';
+import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=12';
+import { track, EVENTS } from '../core/analytics.js?v=12';
+import { tg } from '../core/tg.js?v=12';
+import { catalogAccess } from '../core/store.js?v=12';
+import { esc, icon, plural, scroller } from '../core/ui.js?v=12';
 
 const COPY = {
   quiz: (o) => ({
@@ -352,7 +352,7 @@ function renderSuccess(root, res, lead, opts = {}) {
   const isCatalog = Boolean(opts.catalogId);
   const title = isCatalog ? 'Каталог доступен' : v ? (res.demo ? 'Запись на показ сформирована' : 'Вы записаны на показ') : res.demo ? 'Заявка сформирована' : 'Заявка отправлена';
   const sub = isCatalog
-    ? 'Скачайте PDF или читайте прямо в приложении. Менеджер пришлёт актуальные цены.'
+    ? 'Скачайте PDF. Менеджер пришлёт актуальные цены и свободные лоты.'
     : v
     ? `${v.label} по Москве. Менеджер подтвердит время и пришлёт ссылку.`
     : res.demo ? 'Так будет выглядеть подтверждение после подключения CRM.' : 'Менеджер свяжется с вами в рабочее время.';
@@ -366,8 +366,7 @@ function renderSuccess(root, res, lead, opts = {}) {
       ${res.demo ? `<div class="demo-note"><span><b>Демо-режим:</b> заявка не отправлена, CRM ещё не подключена. Чтобы связаться сейчас, напишите менеджеру.</span></div>
       <details class="payload"><summary>Что уйдёт в CRM после подключения</summary><pre>${esc(JSON.stringify(preview, null, 2))}</pre></details>` : ''}
       <div style="display:grid;gap:10px;margin-top:18px">
-        ${isCatalog ? `<button class="btn btn-primary btn-block" data-pdf>${icon('download')} Скачать PDF</button>
-        <a class="btn btn-tinted btn-block" href="#/catalog/${opts.catalogId}" data-open-catalog>Читать в приложении</a>` : ''}
+        ${isCatalog ? `<button class="btn btn-primary btn-block" data-pdf>${icon('download')} Скачать PDF</button>` : ''}
         <button class="btn ${isCatalog ? 'btn-tinted' : 'btn-primary'} btn-block" data-tg>Написать менеджеру</button>
         <button class="btn btn-tinted btn-block" data-close>Вернуться</button>
       </div>
