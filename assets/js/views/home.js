@@ -1,10 +1,10 @@
-import { AGENCY } from '../config/agency.js?v=4';
-import { CATALOGS } from '../config/catalogs.js?v=4';
-import { POSTS } from '../config/posts.js?v=4';
-import { esc, icon } from '../core/ui.js?v=4';
-import { OBJECTS } from '../config/objects.js?v=4';
-import { activePromos } from '../config/promos.js?v=4';
-import { header, photo, coverCard, postRow, postHero } from './parts.js?v=4';
+import { AGENCY } from '../config/agency.js?v=6';
+import { CATALOGS } from '../config/catalogs.js?v=6';
+import { POSTS } from '../config/posts.js?v=6';
+import { esc, icon } from '../core/ui.js?v=6';
+import { OBJECTS } from '../config/objects.js?v=6';
+import { activePromos } from '../config/promos.js?v=6';
+import { header, photo, coverCard, postRow, postHero } from './parts.js?v=6';
 
 export function home() {
   const [first, ...rest] = POSTS;
@@ -19,7 +19,7 @@ export function home() {
     })}
 
     <section class="hero">
-      ${photo('assets/img/objects/montvert.jpg', 'Курортный комплекс на побережье', { eager: true })}
+      ${photo('assets/img/hero-home.jpg', 'Курортный комплекс на побережье', { eager: true })}
       <div class="hero-card glass-dark">
         <h1 class="t-hero">Курортная недвижимость у&nbsp;моря и&nbsp;в&nbsp;горах</h1>
         <p>Квартиры и апартаменты для жизни, отдыха и инвестиций — с честным разбором каждого проекта.</p>

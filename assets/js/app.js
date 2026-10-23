@@ -1,15 +1,16 @@
-import { tg } from './core/tg.js?v=4';
-import { track, EVENTS, initMetrika } from './core/analytics.js?v=4';
-import { icon, toast } from './core/ui.js?v=4';
-import { store } from './core/store.js?v=4';
-import { home } from './views/home.js?v=4';
-import { catalogs, catalog, notFound } from './views/catalogs.js?v=4';
-import { read } from './views/read.js?v=4';
-import { about } from './views/about.js?v=4';
-import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=4';
-import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=4';
-import { POSTS } from './config/posts.js?v=4';
-import { OBJECTS } from './config/objects.js?v=4';
+import { tg } from './core/tg.js?v=6';
+import { track, EVENTS, initMetrika } from './core/analytics.js?v=6';
+import { icon, toast } from './core/ui.js?v=6';
+import { store } from './core/store.js?v=6';
+import { home } from './views/home.js?v=6';
+import { catalogs, catalog, notFound } from './views/catalogs.js?v=6';
+import { read } from './views/read.js?v=6';
+import { about } from './views/about.js?v=6';
+import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=6';
+import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=6';
+import { POSTS } from './config/posts.js?v=6';
+import { OBJECTS } from './config/objects.js?v=6';
+import { CATALOGS } from './config/catalogs.js?v=6';
 
 const ROUTES = [
   [/^\/?$/, home, 'home'],
@@ -158,6 +159,16 @@ document.addEventListener('click', (e) => {
     if (o) {
       track(EVENTS.VIEWING_OPEN, { object: o.id, from: document.querySelector('main')?.dataset.route });
       openLeadSheet({ context: 'viewing', answers: store.answers, objectIds: [o.id] });
+    }
+    return;
+  }
+  const ub = e.target.closest('[data-unlock]');
+  if (ub) {
+    e.preventDefault();
+    const c = CATALOGS.find((x) => x.id === ub.dataset.unlock);
+    if (c) {
+      track(EVENTS.CATALOG_UNLOCK_OPEN, { catalog: c.id });
+      openLeadSheet({ context: 'catalog', catalogId: c.id, catalogTitle: c.title, answers: store.answers, objectIds: [] });
     }
     return;
   }

@@ -1,10 +1,10 @@
 // Заявки. Формирует данные в формате, готовом для Битрикс24 (crm.lead.add),
 // и отправляет их на ВАШ серверный прокси. В прототипе endpoint не задан → демо-режим.
 
-import { APP } from '../config/app.js?v=4';
-import { QUIZ } from '../config/quiz.js?v=4';
-import { tg } from './tg.js?v=4';
-import { OBJECTS } from '../config/objects.js?v=4';
+import { APP } from '../config/app.js?v=6';
+import { QUIZ } from '../config/quiz.js?v=6';
+import { tg } from './tg.js?v=6';
+import { OBJECTS } from '../config/objects.js?v=6';
 
 // Российские номера приводим к +7XXXXXXXXXX. intl: true — принимаем и зарубежные (номер из Telegram).
 export function normalizePhone(raw, { intl = false } = {}) {
@@ -20,6 +20,7 @@ const CONTEXT_TITLE = {
   object: 'запрос по объекту',
   consultation: 'консультация',
   viewing: 'онлайн-показ',
+  catalog: 'запрос каталога',
 };
 
 function answerLabels(answers) {
@@ -29,7 +30,7 @@ function answerLabels(answers) {
   });
 }
 
-export function buildLead({ name, phone, answers = {}, objectIds = [], context = 'quiz', phoneSource = 'manual', viewing = null }) {
+export function buildLead({ name, phone, answers = {}, objectIds = [], context = 'quiz', phoneSource = 'manual', viewing = null, note = null }) {
   const createdAt = new Date().toISOString();
   const qa = answerLabels(answers);
   const tgUser = tg.user();
@@ -56,6 +57,7 @@ export function buildLead({ name, phone, answers = {}, objectIds = [], context =
       SOURCE_ID: 'UC_TG_MINIAPP', // создайте такой источник в Битрикс24
       SOURCE_DESCRIPTION: APP.lead.source,
       COMMENTS: [
+        note,
         viewing ? `Онлайн-показ: ${viewing.label} (${viewing.timezone}) — подтвердить с клиентом` : null,
         `Телефон: ${phoneSource === 'telegram' ? 'передан из Telegram' : 'введён вручную'}`,
         ...qa.filter((a) => a.value).map((a) => `${a.question} — ${a.label}`),

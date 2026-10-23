@@ -1,6 +1,6 @@
-import { AGENCY } from '../config/agency.js?v=4';
-import { esc, icon } from '../core/ui.js?v=4';
-import { header, photo } from './parts.js?v=4';
+import { AGENCY } from '../config/agency.js?v=6';
+import { esc, icon } from '../core/ui.js?v=6';
+import { header, photo } from './parts.js?v=6';
 
 export function about() {
   const c = AGENCY.contacts;

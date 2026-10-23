@@ -1,9 +1,8 @@
-import { CATALOGS } from '../config/catalogs.js?v=4';
-import { OBJECTS } from '../config/objects.js?v=4';
-import { esc, icon } from '../core/ui.js?v=4';
-import { objectCatalogs, minPrice, fmtMln } from '../core/match.js?v=4';
-import { track, EVENTS } from '../core/analytics.js?v=4';
-import { header, photo, coverCard } from './parts.js?v=4';
+import { CATALOGS } from '../config/catalogs.js?v=6';
+import { esc, icon } from '../core/ui.js?v=6';
+import { catalogAccess } from '../core/store.js?v=6';
+import { track, EVENTS } from '../core/analytics.js?v=6';
+import { header, photo, coverCard } from './parts.js?v=6';
 
 export function catalogs() {
   return {
@@ -12,7 +11,7 @@ export function catalogs() {
     ${header({ title: 'Каталоги', home: true })}
     <div class="page-head">
       <h1 class="t-title">Каталоги</h1>
-      <p class="t-body">Пять подборок OAZIS ESTATE. Читайте прямо здесь или скачайте PDF — без регистрации.</p>
+      <p class="t-body">«ТОП-10 Сочи» открыт сразу. Остальные каталоги пришлём после короткой заявки — вместе с актуальными ценами.</p>
     </div>
     <div class="cat-grid stagger mt-24">${CATALOGS.map(coverCard).join('')}</div>`,
   };
@@ -20,8 +19,8 @@ export function catalogs() {
 
 export function catalog({ id }) {
   const c = CATALOGS.find((x) => x.id === id);
-  if (!c) return notFound();
-  const objs = OBJECTS.filter((o) => objectCatalogs(o).includes(id));
+  if (!c) return { redirect: '#/catalogs' }; // например, удалённый горнолыжный каталог
+  if (!catalogAccess.isOpen(c)) return lockedCatalog(c);
   const pages = Array.from({ length: c.pages }, (_, i) => `${c.dir}/p${String(i + 1).padStart(2, '0')}.jpg`);
 
   return {
@@ -44,16 +43,6 @@ export function catalog({ id }) {
       <p class="t-body">${esc(c.description)}</p>
       <button class="btn btn-primary btn-block mt-16" data-action="scroll-reader">Читать каталог</button>
     </div>
-
-    ${objs.length ? `<section class="section">
-      <div class="sec-head"><h2 class="t-h2">Объекты</h2><span class="t-sub">${objs.length}</span></div>
-      <div class="rail stagger">${objs.map((o, i) => `<a class="mini" href="#/object/${o.id}" style="--i:${i}">
-        ${photo(o.image, '')}
-        <div class="t">${esc(o.alias)}</div>
-        <div class="s">${o.prices[id] ? `от ${fmtMln(o.prices[id])}` : minPrice(o) ? `от ${fmtMln(minPrice(o))}` : 'Цена по запросу'}</div>
-        <div class="s">${esc(o.region)}</div>
-      </a>`).join('')}</div>
-    </section>` : ''}
 
     <section class="section" id="reader-start">
       <div class="reader" id="reader">
@@ -111,6 +100,30 @@ export function catalog({ id }) {
       });
       return () => { window.removeEventListener('scroll', onScroll); io?.disconnect(); };
     },
+  };
+}
+
+function lockedCatalog(c) {
+  return {
+    tab: 'catalogs',
+    back: true,
+    html: `
+    ${header({ title: c.title })}
+    <section class="cat-hero is-locked">
+      ${photo(c.cover, `Обложка каталога «${c.title}»`, { eager: true })}
+      <div class="panel glass-dark">
+        <div>
+          <h1 class="sr-only">${esc(c.title)}</h1>
+          <div class="t-h3" style="color:#fff">${c.objectsCount} объектов на ${c.pages} страницах</div>
+          <p class="t-small">Откроется после заявки</p>
+        </div>
+        <span class="circle glass-dark" aria-hidden="true">${icon('lock')}</span>
+      </div>
+    </section>
+    <div class="wrap mt-16">
+      <p class="t-body">${esc(c.description)}</p>
+      <button class="btn btn-primary btn-block mt-16" data-unlock="${c.id}">Открыть каталог</button>
+    </div>`,
   };
 }
 

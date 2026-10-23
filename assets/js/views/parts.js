@@ -1,9 +1,10 @@
 // Переиспользуемые куски разметки.
 
-import { esc, icon, fmtDate } from '../core/ui.js?v=4';
-import { minPrice, fmtMln, TYPE_LABEL, hasPriceConflict } from '../core/match.js?v=4';
-import { APP } from '../config/app.js?v=4';
-import { promoFor } from '../config/promos.js?v=4';
+import { esc, icon, fmtDate } from '../core/ui.js?v=6';
+import { minPrice, fmtMln, TYPE_LABEL, hasPriceConflict } from '../core/match.js?v=6';
+import { APP } from '../config/app.js?v=6';
+import { promoFor } from '../config/promos.js?v=6';
+import { catalogAccess } from '../core/store.js?v=6';
 
 // Фото со скелетом загрузки. Класс .ready ставит app.js по событию load.
 export const photo = (src, alt = '', { eager = false, cls = '' } = {}) =>
@@ -21,6 +22,13 @@ export function header({ title = '', back = true, right = '', left = '', home = 
 }
 
 export function coverCard(c, i = 0) {
+  if (!catalogAccess.isOpen(c)) {
+    return `<a class="cover is-locked" href="#/catalog/${c.id}" data-unlock="${c.id}" style="--i:${i}" aria-label="Каталог «${esc(c.title)}» — откроется после заявки">
+      <div class="ph-wrap">${photo(c.cover, '')}<span class="lock glass-dark">${icon('lock', 'ic-sm')}</span></div>
+      <div class="t">${esc(c.title)}</div>
+      <div class="s">Откроется после заявки</div>
+    </a>`;
+  }
   return `<a class="cover" href="#/catalog/${c.id}" style="--i:${i}">
     ${photo(c.cover, `Обложка каталога «${c.title}»`)}
     <div class="t">${esc(c.title)}</div>

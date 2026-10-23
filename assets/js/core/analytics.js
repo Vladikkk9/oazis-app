@@ -1,7 +1,7 @@
 // Демонстрационная аналитика. Персональные данные в события НЕ попадают:
 // любые поля из BLOCKED вырезаются перед записью.
 
-import { APP } from '../config/app.js?v=4';
+import { APP } from '../config/app.js?v=6';
 
 const BLOCKED = ['name', 'phone', 'email', 'username', 'first_name', 'last_name', 'user', 'initData'];
 const buffer = [];
@@ -33,6 +33,7 @@ export const EVENTS = {
   PROMO_TAP: 'promo_tap',
   VIEWING_OPEN: 'viewing_open',
   CONTACT_SHARE: 'contact_share',
+  CATALOG_UNLOCK_OPEN: 'catalog_unlock_open',
 };
 
 export function track(event, props = {}) {

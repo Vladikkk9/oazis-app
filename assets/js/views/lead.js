@@ -2,12 +2,13 @@
 // В Telegram главный путь — «Отправить с номером из Telegram» (одно нажатие),
 // ручной ввод остаётся запасным. В обычном браузере — классическая форма.
 
-import { AGENCY } from '../config/agency.js?v=4';
-import { APP } from '../config/app.js?v=4';
-import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=4';
-import { track, EVENTS } from '../core/analytics.js?v=4';
-import { tg } from '../core/tg.js?v=4';
-import { esc, icon, plural } from '../core/ui.js?v=4';
+import { AGENCY } from '../config/agency.js?v=6';
+import { APP } from '../config/app.js?v=6';
+import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=6';
+import { track, EVENTS } from '../core/analytics.js?v=6';
+import { tg } from '../core/tg.js?v=6';
+import { catalogAccess } from '../core/store.js?v=6';
+import { esc, icon, plural } from '../core/ui.js?v=6';
 
 const COPY = {
   quiz: (o) => ({
@@ -24,6 +25,11 @@ const COPY = {
     title: 'Консультация',
     text: 'Менеджер ответит на вопросы и поможет сравнить объекты.',
     button: 'Получить консультацию',
+  }),
+  catalog: (o) => ({
+    title: `Каталог «${o.catalogTitle}»`,
+    text: 'Откроем каталог сразу после заявки, а менеджер пришлёт актуальные цены.',
+    button: 'Открыть каталог',
   }),
   viewing: (o) => ({
     title: 'Онлайн-показ',
@@ -235,6 +241,7 @@ export function openLeadSheet(opts) {
     const lead = buildLead({
       name, phone, phoneSource,
       answers: opts.answers, objectIds: opts.objectIds, context: opts.context, viewing: viewingValue(),
+      note: opts.catalogTitle ? `Запросил каталог «${opts.catalogTitle}»` : null,
     });
     const res = await submitLead(lead);
     track(EVENTS.LEAD_SUBMIT, { context: opts.context, demo: res.demo ?? false, ok: res.ok, objects: opts.objectIds?.length || 0, phoneSource });
@@ -246,7 +253,8 @@ export function openLeadSheet(opts) {
       return;
     }
     tg.haptic('success');
-    renderSuccess(root, res, lead);
+    if (opts.catalogId) catalogAccess.unlock(opts.catalogId);
+    renderSuccess(root, res, lead, opts);
   }
 
   // ----- Номер в одно нажатие -----
@@ -303,12 +311,15 @@ export function openLeadSheet(opts) {
   if (state.manual && !isViewing) setTimeout(() => (nameI.value ? phoneI : nameI).focus({ preventScroll: true }), 360);
 }
 
-function renderSuccess(root, res, lead) {
+function renderSuccess(root, res, lead, opts = {}) {
   const preview = { ...lead };
   delete preview.initData;
   const v = lead.viewing;
-  const title = v ? (res.demo ? 'Запись на показ сформирована' : 'Вы записаны на показ') : res.demo ? 'Заявка сформирована' : 'Заявка отправлена';
-  const sub = v
+  const isCatalog = Boolean(opts.catalogId);
+  const title = isCatalog ? 'Каталог открыт' : v ? (res.demo ? 'Запись на показ сформирована' : 'Вы записаны на показ') : res.demo ? 'Заявка сформирована' : 'Заявка отправлена';
+  const sub = isCatalog
+    ? 'Менеджер пришлёт актуальные цены и свободные лоты.'
+    : v
     ? `${v.label} по Москве. Менеджер подтвердит время и пришлёт ссылку.`
     : res.demo ? 'Так будет выглядеть подтверждение после подключения CRM.' : 'Менеджер свяжется с вами в рабочее время.';
   const sheet = root.querySelector('.sheet');
@@ -321,11 +332,19 @@ function renderSuccess(root, res, lead) {
       ${res.demo ? `<div class="demo-note"><span><b>Демо-режим:</b> заявка не отправлена, CRM ещё не подключена. Чтобы связаться сейчас, напишите менеджеру.</span></div>
       <details class="payload"><summary>Что уйдёт в CRM после подключения</summary><pre>${esc(JSON.stringify(preview, null, 2))}</pre></details>` : ''}
       <div style="display:grid;gap:10px;margin-top:18px">
-        <button class="btn btn-primary btn-block" data-tg>Написать менеджеру</button>
+        ${isCatalog ? `<a class="btn btn-primary btn-block" href="#/catalog/${opts.catalogId}" data-open-catalog>Открыть каталог</a>` : ''}
+        <button class="btn ${isCatalog ? 'btn-tinted' : 'btn-primary'} btn-block" data-tg>Написать менеджеру</button>
         <button class="btn btn-tinted btn-block" data-close>Вернуться</button>
       </div>
     </div>`;
-  sheet.querySelector('[data-close]').addEventListener('click', closeLeadSheet);
+  sheet.querySelector('[data-close]').addEventListener('click', () => {
+    closeLeadSheet();
+    if (isCatalog) window.dispatchEvent(new HashChangeEvent('hashchange')); // перерисовать: замок снят
+  });
+  sheet.querySelector('[data-open-catalog]')?.addEventListener('click', () => {
+    closeLeadSheet();
+    if (location.hash === `#/catalog/${opts.catalogId}`) window.dispatchEvent(new HashChangeEvent('hashchange'));
+  });
   sheet.querySelector('[data-tg]').addEventListener('click', () => {
     track(EVENTS.CONTACT_TAP, { channel: 'manager', from: 'lead_success' });
     tg.open(AGENCY.contacts.manager);

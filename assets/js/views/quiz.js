@@ -1,14 +1,15 @@
-import { QUIZ } from '../config/quiz.js?v=4';
-import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=4';
-import { store } from '../core/store.js?v=4';
-import { esc, icon, plural } from '../core/ui.js?v=4';
-import { tg } from '../core/tg.js?v=4';
-import { track, EVENTS } from '../core/analytics.js?v=4';
-import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=4';
-import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=4';
-import { openLeadSheet } from './lead.js?v=4';
-import { notFound } from './catalogs.js?v=4';
-import { promoFor } from '../config/promos.js?v=4';
+import { QUIZ } from '../config/quiz.js?v=6';
+import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=6';
+import { store } from '../core/store.js?v=6';
+import { esc, icon, plural } from '../core/ui.js?v=6';
+import { tg } from '../core/tg.js?v=6';
+import { track, EVENTS } from '../core/analytics.js?v=6';
+import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=6';
+import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=6';
+import { openLeadSheet } from './lead.js?v=6';
+import { notFound } from './catalogs.js?v=6';
+import { CATALOGS } from '../config/catalogs.js?v=6';
+import { promoFor } from '../config/promos.js?v=6';
 
 // Фон квиза меняется от шага к шагу — живая подложка для стеклянных вариантов ответа.
 const QUIZ_BG = ['palazzo', 'leeprime', 'kp540', 'volna', 'kedry'];
@@ -118,7 +119,7 @@ export function quizStep({ step }) {
 
 export function matching() {
   if (firstUnanswered()) return { redirect: `#/quiz/${firstUnanswered()}` };
-  const steps = ['Сверяем формат и цель', 'Смотрим пять каталогов', 'Проверяем бюджет и условия'];
+  const steps = ['Сверяем формат и цель', 'Смотрим каталоги OAZIS', 'Проверяем бюджет и условия'];
   return {
     hideNav: true,
     html: `<div class="matching" role="status" aria-live="polite"><div>
@@ -250,7 +251,7 @@ export function objectView({ id }) {
   const o = OBJECTS.find((x) => x.id === id);
   if (!o) return notFound();
   const sources = priceSources(o);
-  const cats = objectCatalogs(o);
+  const cats = objectCatalogs(o).filter((cid) => CATALOGS.some((c) => c.id === cid)); // только каталоги, которые есть в приложении
   const area = o.area?.[0] ? `${o.area[0]}${o.area[1] ? `–${o.area[1]}` : '+'} м²` : '—';
   const promo = promoFor(o.id);
   const CLASS_GEN = { 'Премиум': 'премиум-класса', 'Бизнес': 'бизнес-класса', 'Комфорт': 'комфорт-класса', 'Элит': 'элит-класса' };

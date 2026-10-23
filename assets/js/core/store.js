@@ -19,6 +19,25 @@ function persist() {
   } catch { /* приватный режим и т.п. */ }
 }
 
+// Каталоги, открытые после заявки. localStorage — чтобы не просить контакт повторно.
+const UNLOCK_KEY = 'oazis.unlocked.v1';
+function readUnlocked() {
+  try {
+    return JSON.parse(localStorage.getItem(UNLOCK_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+export const catalogAccess = {
+  isOpen: (c) => !c.locked || readUnlocked().includes(c.id),
+  unlock(id) {
+    try {
+      localStorage.setItem(UNLOCK_KEY, JSON.stringify([...new Set([...readUnlocked(), id])]));
+    } catch { /* приватный режим */ }
+  },
+};
+
 export const store = {
   get answers() {
     return { ...state.answers };
