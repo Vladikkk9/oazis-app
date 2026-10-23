@@ -2,13 +2,13 @@
 // В Telegram главный путь — «Отправить с номером из Telegram» (одно нажатие),
 // ручной ввод остаётся запасным. В обычном браузере — классическая форма.
 
-import { AGENCY } from '../config/agency.js?v=9';
-import { APP } from '../config/app.js?v=9';
-import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=9';
-import { track, EVENTS } from '../core/analytics.js?v=9';
-import { tg } from '../core/tg.js?v=9';
-import { catalogAccess } from '../core/store.js?v=9';
-import { esc, icon, plural, scroller } from '../core/ui.js?v=9';
+import { AGENCY } from '../config/agency.js?v=10';
+import { APP } from '../config/app.js?v=10';
+import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=10';
+import { track, EVENTS } from '../core/analytics.js?v=10';
+import { tg } from '../core/tg.js?v=10';
+import { catalogAccess } from '../core/store.js?v=10';
+import { esc, icon, plural, scroller } from '../core/ui.js?v=10';
 
 const COPY = {
   quiz: (o) => ({
@@ -94,7 +94,6 @@ function formatPhoneInput(v) {
 // Шторка «Что внутри каталога»: обложка, состав и кнопка «Скачать каталог» → обычная форма заявки.
 export function openCatalogSheet(c) {
   closeLeadSheet();
-  const open = catalogAccess.isOpen(c);
   const root = document.createElement('div');
   root.className = 'sheet-root';
   root.innerHTML = `
@@ -114,13 +113,11 @@ export function openCatalogSheet(c) {
       </div>
       <ul class="inside">${(c.inside || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <button class="btn btn-primary btn-block mt-16" data-download>${icon('download')} Скачать каталог</button>
-      ${open ? `<a class="btn btn-plain btn-block mt-8" href="#/catalog/${c.id}" data-read>Читать в приложении</a>` : ''}
     </div>`;
   document.body.appendChild(root);
   scroller().style.overflow = 'hidden';
   current = root;
   root.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeLeadSheet));
-  root.querySelector('[data-read]')?.addEventListener('click', closeLeadSheet);
   root.querySelector('[data-download]').addEventListener('click', () => {
     track(EVENTS.LEAD_FORM_OPEN, { from: 'catalog_sheet', catalog: c.id });
     openLeadSheet({ context: 'catalog', catalogId: c.id, catalogTitle: c.title, catalogPdf: c.pdf, answers: {}, objectIds: [] });

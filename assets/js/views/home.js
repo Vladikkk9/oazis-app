@@ -1,10 +1,10 @@
-import { AGENCY } from '../config/agency.js?v=9';
-import { CATALOGS } from '../config/catalogs.js?v=9';
-import { POSTS } from '../config/posts.js?v=9';
-import { esc, icon } from '../core/ui.js?v=9';
-import { OBJECTS } from '../config/objects.js?v=9';
-import { activePromos } from '../config/promos.js?v=9';
-import { header, photo, coverCard, postRow, postHero } from './parts.js?v=9';
+import { AGENCY } from '../config/agency.js?v=10';
+import { CATALOGS } from '../config/catalogs.js?v=10';
+import { POSTS } from '../config/posts.js?v=10';
+import { esc, icon } from '../core/ui.js?v=10';
+import { OBJECTS } from '../config/objects.js?v=10';
+import { activePromos } from '../config/promos.js?v=10';
+import { header, photo, coverCard, postRow, postHero } from './parts.js?v=10';
 
 export function home() {
   const [first, ...rest] = POSTS;

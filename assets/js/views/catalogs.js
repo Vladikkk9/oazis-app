@@ -1,8 +1,8 @@
-import { CATALOGS } from '../config/catalogs.js?v=9';
-import { esc, icon, scroller } from '../core/ui.js?v=9';
-import { catalogAccess } from '../core/store.js?v=9';
-import { track, EVENTS } from '../core/analytics.js?v=9';
-import { header, photo, coverCard } from './parts.js?v=9';
+import { CATALOGS } from '../config/catalogs.js?v=10';
+import { esc, icon, scroller } from '../core/ui.js?v=10';
+import { catalogAccess } from '../core/store.js?v=10';
+import { track, EVENTS } from '../core/analytics.js?v=10';
+import { header, photo, coverCard } from './parts.js?v=10';
 
 export function catalogs() {
   return {

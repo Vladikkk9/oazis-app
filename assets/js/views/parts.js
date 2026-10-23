@@ -1,9 +1,9 @@
 // Переиспользуемые куски разметки.
 
-import { esc, icon, fmtDate } from '../core/ui.js?v=9';
-import { minPrice, fmtMln, TYPE_LABEL, hasPriceConflict } from '../core/match.js?v=9';
-import { APP } from '../config/app.js?v=9';
-import { promoFor } from '../config/promos.js?v=9';
+import { esc, icon, fmtDate } from '../core/ui.js?v=10';
+import { minPrice, fmtMln, TYPE_LABEL, hasPriceConflict } from '../core/match.js?v=10';
+import { APP } from '../config/app.js?v=10';
+import { promoFor } from '../config/promos.js?v=10';
 
 // Фото со скелетом загрузки. Класс .ready ставит app.js по событию load.
 export const photo = (src, alt = '', { eager = false, cls = '' } = {}) =>
