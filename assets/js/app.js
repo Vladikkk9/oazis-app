@@ -1,23 +1,21 @@
-import { tg } from './core/tg.js?v=3';
-import { track, EVENTS } from './core/analytics.js?v=3';
-import { icon, toast } from './core/ui.js?v=3';
-import { store } from './core/store.js?v=3';
-import { home } from './views/home.js?v=3';
-import { catalogs, catalog, notFound } from './views/catalogs.js?v=3';
-import { read } from './views/read.js?v=3';
-import { region } from './views/region.js?v=3';
-import { about } from './views/about.js?v=3';
-import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=3';
-import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=3';
-import { POSTS } from './config/posts.js?v=3';
-import { OBJECTS } from './config/objects.js?v=3';
+import { tg } from './core/tg.js?v=4';
+import { track, EVENTS, initMetrika } from './core/analytics.js?v=4';
+import { icon, toast } from './core/ui.js?v=4';
+import { store } from './core/store.js?v=4';
+import { home } from './views/home.js?v=4';
+import { catalogs, catalog, notFound } from './views/catalogs.js?v=4';
+import { read } from './views/read.js?v=4';
+import { about } from './views/about.js?v=4';
+import { quizStep, matching, results, objectView, firstUnanswered } from './views/quiz.js?v=4';
+import { openLeadSheet, closeLeadSheet } from './views/lead.js?v=4';
+import { POSTS } from './config/posts.js?v=4';
+import { OBJECTS } from './config/objects.js?v=4';
 
 const ROUTES = [
   [/^\/?$/, home, 'home'],
   [/^\/catalogs$/, catalogs, 'catalogs'],
   [/^\/catalog\/([\w-]+)$/, catalog, 'catalog', ['id']],
   [/^\/read$/, read, 'read'],
-  [/^\/region\/([\w-]+)$/, region, 'region', ['id']],
   [/^\/about$/, about, 'about'],
   [/^\/quiz$/, () => ({ redirect: quizEntry() }), 'quiz'],
   [/^\/quiz\/(\d)$/, quizStep, 'quiz_step', ['step']],
@@ -140,8 +138,8 @@ function render() {
   window.scrollTo(0, prevY && name !== 'quiz_step' ? prevY : 0);
 
   renderNav(v.tab, Boolean(v.hideNav));
-  const isRoot = ROOT_TABS.includes(name);
-  tg.backButton(!isRoot, goBack);
+  // Системная кнопка Telegram «Назад»: на вкладках ведёт на главную, на внутренних экранах — на шаг назад.
+  tg.backButton(name !== 'home', ROOT_TABS.includes(name) ? () => go('#/') : goBack);
 
   const root = app.firstElementChild;
   markLoaded(root);
@@ -159,7 +157,7 @@ document.addEventListener('click', (e) => {
     const o = OBJECTS.find((x) => x.id === vb.dataset.viewing);
     if (o) {
       track(EVENTS.VIEWING_OPEN, { object: o.id, from: document.querySelector('main')?.dataset.route });
-      openLeadSheet({ context: 'viewing', answers: store.answers, objectIds: [o.id], objectName: o.name });
+      openLeadSheet({ context: 'viewing', answers: store.answers, objectIds: [o.id] });
     }
     return;
   }
@@ -222,6 +220,7 @@ function startRoute() {
 if (/tgWebApp/.test(location.hash)) history.replaceState(null, '', `${location.pathname}${location.search}#/`);
 
 tg.init();
+initMetrika({ platform: tg.raw?.platform || 'web', inTelegram: tg.inside });
 track(EVENTS.APP_OPEN, { inTelegram: tg.inside, platform: tg.raw?.platform || 'web' });
 const start = startRoute();
 if (start && (!location.hash || location.hash === '#/')) {

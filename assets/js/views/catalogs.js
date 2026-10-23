@@ -1,15 +1,15 @@
-import { CATALOGS } from '../config/catalogs.js?v=3';
-import { OBJECTS } from '../config/objects.js?v=3';
-import { esc, icon } from '../core/ui.js?v=3';
-import { objectCatalogs, minPrice, fmtMln } from '../core/match.js?v=3';
-import { track, EVENTS } from '../core/analytics.js?v=3';
-import { header, photo, coverCard } from './parts.js?v=3';
+import { CATALOGS } from '../config/catalogs.js?v=4';
+import { OBJECTS } from '../config/objects.js?v=4';
+import { esc, icon } from '../core/ui.js?v=4';
+import { objectCatalogs, minPrice, fmtMln } from '../core/match.js?v=4';
+import { track, EVENTS } from '../core/analytics.js?v=4';
+import { header, photo, coverCard } from './parts.js?v=4';
 
 export function catalogs() {
   return {
     tab: 'catalogs',
     html: `
-    ${header({ title: 'Каталоги', back: false })}
+    ${header({ title: 'Каталоги', home: true })}
     <div class="page-head">
       <h1 class="t-title">Каталоги</h1>
       <p class="t-body">Пять подборок OAZIS ESTATE. Читайте прямо здесь или скачайте PDF — без регистрации.</p>
@@ -49,7 +49,7 @@ export function catalog({ id }) {
       <div class="sec-head"><h2 class="t-h2">Объекты</h2><span class="t-sub">${objs.length}</span></div>
       <div class="rail stagger">${objs.map((o, i) => `<a class="mini" href="#/object/${o.id}" style="--i:${i}">
         ${photo(o.image, '')}
-        <div class="t">${esc(o.name)}</div>
+        <div class="t">${esc(o.alias)}</div>
         <div class="s">${o.prices[id] ? `от ${fmtMln(o.prices[id])}` : minPrice(o) ? `от ${fmtMln(minPrice(o))}` : 'Цена по запросу'}</div>
         <div class="s">${esc(o.region)}</div>
       </a>`).join('')}</div>

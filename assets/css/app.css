@@ -84,6 +84,7 @@ body {
   overscroll-behavior-y: none;
 }
 img { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; letter-spacing: inherit; }
 a { color: inherit; text-decoration: none; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
@@ -300,6 +301,19 @@ a { color: inherit; text-decoration: none; }
 .progress-dots { display: flex; gap: 5px; margin-bottom: 14px; }
 .progress-dots i { width: 22px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.35); }
 .progress-dots i:first-child { background: #fff; }
+
+/* Строка-ссылка «Об агентстве» */
+.row-link {
+  display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center;
+  padding: 12px 14px; border-radius: var(--r-l); background: var(--surface);
+  transition: transform 200ms var(--spring), background 150ms;
+}
+.row-link:active { transform: scale(.98); }
+.row-link .ibox { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.row-link b { display: block; font-size: 16.5px; font-weight: 600; letter-spacing: -.02em; }
+.row-link small { display: block; font-size: 13.5px; color: var(--ink-3); margin-top: 1px; }
+.row-link .chev { color: var(--ink-3); }
+.facts.section { padding-top: 0; }
 
 /* ---------- Grouped list (iOS) ---------- */
 .group { margin: 0 var(--gutter); background: var(--surface); border-radius: var(--r-l); overflow: hidden; }

@@ -1,7 +1,7 @@
 // Демонстрационная аналитика. Персональные данные в события НЕ попадают:
 // любые поля из BLOCKED вырезаются перед записью.
 
-import { APP } from '../config/app.js?v=3';
+import { APP } from '../config/app.js?v=4';
 
 const BLOCKED = ['name', 'phone', 'email', 'username', 'first_name', 'last_name', 'user', 'initData'];
 const buffer = [];
@@ -43,10 +43,35 @@ export function track(event, props = {}) {
 
   if (APP.analytics.debug) console.info('[analytics]', event, entry);
 
-  // Пример подключения Яндекс Метрики (цели):
-  if (APP.analytics.yandexMetrikaId && typeof window.ym === 'function') {
-    window.ym(APP.analytics.yandexMetrikaId, 'reachGoal', event, sanitize(props));
+  const id = APP.analytics.yandexMetrikaId;
+  if (id && typeof window.ym === 'function') {
+    // Переход между экранами — как просмотр страницы, остальное — как цели (их видно в отчёте «Конверсии»).
+    if (event === EVENTS.SECTION_VIEW) window.ym(id, 'hit', location.href, { title: props.section });
+    else window.ym(id, 'reachGoal', event, sanitize(props));
   }
+}
+
+// Яндекс Метрика: подключается, только если в config/app.js указан номер счётчика.
+// Считает визиты и уникальных пользователей, пишет цели, собирает аудитории для ретаргетинга в Директе.
+export function initMetrika({ platform = 'web', inTelegram = false } = {}) {
+  const id = APP.analytics.yandexMetrikaId;
+  if (!id || window.ym) return;
+  /* eslint-disable */
+  (function (m, e, t, r, i, k, a) {
+    m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+    m[i].l = 1 * new Date();
+    k = e.createElement(t); a = e.getElementsByTagName(t)[0];
+    k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+  })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+  /* eslint-enable */
+  window.ym(id, 'init', {
+    clickmap: true,
+    trackLinks: true,
+    accurateTrackBounce: true,
+    webvisor: APP.analytics.webvisor !== false,
+    trackHash: false, // экраны отправляем сами через 'hit'
+    params: { source: inTelegram ? 'telegram_mini_app' : 'browser', platform },
+  });
 }
 
 export const getEvents = () => buffer.slice();

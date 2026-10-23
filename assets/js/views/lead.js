@@ -2,32 +2,32 @@
 // В Telegram главный путь — «Отправить с номером из Telegram» (одно нажатие),
 // ручной ввод остаётся запасным. В обычном браузере — классическая форма.
 
-import { AGENCY } from '../config/agency.js?v=3';
-import { APP } from '../config/app.js?v=3';
-import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=3';
-import { track, EVENTS } from '../core/analytics.js?v=3';
-import { tg } from '../core/tg.js?v=3';
-import { esc, icon, plural } from '../core/ui.js?v=3';
+import { AGENCY } from '../config/agency.js?v=4';
+import { APP } from '../config/app.js?v=4';
+import { buildLead, submitLead, normalizePhone } from '../core/lead.js?v=4';
+import { track, EVENTS } from '../core/analytics.js?v=4';
+import { tg } from '../core/tg.js?v=4';
+import { esc, icon, plural } from '../core/ui.js?v=4';
 
 const COPY = {
   quiz: (o) => ({
     title: 'Полная подборка',
-    text: `Пришлём все подходящие объекты${o.extra ? `, включая ${o.extra} ${plural(o.extra, ['дополнительный', 'дополнительных', 'дополнительных'])},` : ''} с актуальными ценами, свободными лотами и условиями покупки.`,
+    text: `Пришлём все подходящие объекты${o.extra ? `, включая ${o.extra} ${plural(o.extra, ['дополнительный', 'дополнительных', 'дополнительных'])},` : ''} с актуальными ценами и условиями.`,
     button: 'Получить подборку',
   }),
   object: (o) => ({
     title: 'Планировки и цены',
-    text: `Пришлём свободные лоты, планировки и актуальную стоимость по объекту «${o.objectName}».`,
+    text: 'Пришлём свободные лоты, планировки и актуальные цены по этому объекту.',
     button: 'Запросить',
   }),
   consultation: () => ({
     title: 'Консультация',
-    text: 'Менеджер свяжется с вами, ответит на вопросы и поможет сравнить объекты.',
+    text: 'Менеджер ответит на вопросы и поможет сравнить объекты.',
     button: 'Получить консультацию',
   }),
   viewing: (o) => ({
     title: 'Онлайн-показ',
-    text: `Менеджер проведёт вас по объекту «${o.objectName}» по видеосвязи: покажет территорию, планировки и ответит на вопросы.`,
+    text: 'Менеджер покажет территорию и планировки по видеосвязи и ответит на вопросы.',
     button: 'Записаться на показ',
   }),
 };
@@ -125,7 +125,7 @@ export function openLeadSheet(opts) {
           <div class="pick-label">Время, ${esc(APP.viewing.timezoneLabel)}</div>
           <div class="slots" role="radiogroup" aria-label="Время показа"></div>
           <div class="err" data-slot-err aria-live="polite"></div>
-          <p class="t-small">Это предпочтительное время — менеджер подтвердит его в Telegram или по телефону.</p>
+          <p class="t-small">Менеджер подтвердит время в Telegram или по телефону.</p>
         </div>` : ''}
 
         <div class="manual" ${state.manual ? '' : 'hidden'}>
@@ -309,8 +309,8 @@ function renderSuccess(root, res, lead) {
   const v = lead.viewing;
   const title = v ? (res.demo ? 'Запись на показ сформирована' : 'Вы записаны на показ') : res.demo ? 'Заявка сформирована' : 'Заявка отправлена';
   const sub = v
-    ? `${v.label}, ${APP.viewing.timezoneLabel}. Менеджер подтвердит время и пришлёт ссылку на видеозвонок.`
-    : res.demo ? 'Так будет выглядеть подтверждение после подключения CRM.' : 'Менеджер OAZIS ESTATE свяжется с вами в ближайшее рабочее время.';
+    ? `${v.label} по Москве. Менеджер подтвердит время и пришлёт ссылку.`
+    : res.demo ? 'Так будет выглядеть подтверждение после подключения CRM.' : 'Менеджер свяжется с вами в рабочее время.';
   const sheet = root.querySelector('.sheet');
   sheet.innerHTML = `
     <div class="grabber" aria-hidden="true"></div>
@@ -318,7 +318,7 @@ function renderSuccess(root, res, lead) {
       <div class="mark">${icon(v ? 'video' : 'check')}</div>
       <h2 class="t-h2">${title}</h2>
       <p class="t-sub" style="margin:8px 0 0">${esc(sub)}</p>
-      ${res.demo ? `<div class="demo-note"><span><b>Демо-режим.</b> Данные никуда не отправлены: интеграция с Битрикс24 ещё не подключена. Чтобы связаться с нами сейчас, напишите менеджеру в Telegram.</span></div>
+      ${res.demo ? `<div class="demo-note"><span><b>Демо-режим:</b> заявка не отправлена, CRM ещё не подключена. Чтобы связаться сейчас, напишите менеджеру.</span></div>
       <details class="payload"><summary>Что уйдёт в CRM после подключения</summary><pre>${esc(JSON.stringify(preview, null, 2))}</pre></details>` : ''}
       <div style="display:grid;gap:10px;margin-top:18px">
         <button class="btn btn-primary btn-block" data-tg>Написать менеджеру</button>

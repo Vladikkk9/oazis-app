@@ -1,18 +1,18 @@
 // Переиспользуемые куски разметки.
 
-import { esc, icon, fmtDate } from '../core/ui.js?v=3';
-import { minPrice, fmtMln, TYPE_LABEL, hasPriceConflict } from '../core/match.js?v=3';
-import { APP } from '../config/app.js?v=3';
-import { promoFor } from '../config/promos.js?v=3';
+import { esc, icon, fmtDate } from '../core/ui.js?v=4';
+import { minPrice, fmtMln, TYPE_LABEL, hasPriceConflict } from '../core/match.js?v=4';
+import { APP } from '../config/app.js?v=4';
+import { promoFor } from '../config/promos.js?v=4';
 
 // Фото со скелетом загрузки. Класс .ready ставит app.js по событию load.
 export const photo = (src, alt = '', { eager = false, cls = '' } = {}) =>
   `<div class="ph ${cls}"><img src="${src}" alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"></div>`;
 
 // Плавающая шапка: стеклянные кнопки, заголовок проявляется при прокрутке.
-export function header({ title = '', back = true, right = '', left = '' } = {}) {
+export function header({ title = '', back = true, right = '', left = '', home = false } = {}) {
   const showBack = back; // своя кнопка «Назад» видна всегда, системная Telegram-кнопка дублирует её
-  const l = left || (showBack ? `<button class="circle glass" data-action="back" aria-label="Назад">${icon('arrowL')}</button>` : '<span class="spacer"></span>');
+  const l = left || (home ? `<a class="circle glass" href="#/" aria-label="На главную">${icon('arrowL')}</a>` : showBack ? `<button class="circle glass" data-action="back" aria-label="Назад">${icon('arrowL')}</button>` : '<span class="spacer"></span>');
   return `<header class="header" data-header>
     ${l}
     <div class="title">${esc(title)}</div>
@@ -63,11 +63,11 @@ export function specs(o) {
 export function objectCard(o, reasons = [], { near = false, i = 0 } = {}) {
   const promo = promoFor(o.id);
   return `<article class="ocard" style="--i:${i}">
-    <a class="photo" href="#/object/${o.id}" data-object-view="${o.id}" aria-label="${esc(o.name)}">
-      ${photo(o.image, o.name)}
+    <a class="photo" href="#/object/${o.id}" data-object-view="${o.id}" aria-label="${esc(o.alias)}">
+      ${photo(o.image, o.alias)}
       <span class="badge glass-dark">${near ? 'Близкий вариант' : promo ? esc(promo.title) : esc(TYPE_LABEL[o.type] || o.format)}</span>
       <div class="panel glass-dark">
-        <div class="t-h2">${esc(o.name)}</div>
+        <div class="t-h2">${esc(o.alias)}</div>
         <div class="loc">${esc(o.location)}</div>
         <div class="price">${priceText(o)}</div>${hasPriceConflict(o) ? '<div class="loc">цена в каталогах различается</div>' : ''}
       </div>

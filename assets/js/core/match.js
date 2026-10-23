@@ -1,8 +1,8 @@
 // Подбор объектов по ответам квиза.
 // Принципы: только факты из каталогов; если совпадений мало — показываем меньше, а не придумываем.
 
-import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=3';
-import { QUIZ } from '../config/quiz.js?v=3';
+import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=4';
+import { QUIZ } from '../config/quiz.js?v=4';
 
 export const TYPE_LABEL = { flat: 'Квартира', apartments: 'Апартаменты', null: 'Формат уточняется' };
 
@@ -51,7 +51,7 @@ function reasons(o, a, b) {
   if (a.purpose === 'rent' && o.purposes.includes('rent'))
     r.push('В каталоге указан оператор или управляющая компания — сдавать можно без самостоятельного управления');
   else if (a.purpose === 'live' && o.purposes.includes('live'))
-    r.push(`Подходит для жизни: ${o.features[0].toLowerCase()}`);
+    r.push(`Подходит для жизни: ${o.perks[0].toLowerCase()}`);
   else if (a.purpose === 'invest' && o.purposes.includes('rent'))
     r.push('Есть оператор или управляющая компания — доход без самостоятельного управления');
 

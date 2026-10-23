@@ -1,14 +1,14 @@
-import { QUIZ } from '../config/quiz.js?v=3';
-import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=3';
-import { store } from '../core/store.js?v=3';
-import { esc, icon, plural } from '../core/ui.js?v=3';
-import { tg } from '../core/tg.js?v=3';
-import { track, EVENTS } from '../core/analytics.js?v=3';
-import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=3';
-import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=3';
-import { openLeadSheet } from './lead.js?v=3';
-import { notFound } from './catalogs.js?v=3';
-import { promoFor } from '../config/promos.js?v=3';
+import { QUIZ } from '../config/quiz.js?v=4';
+import { OBJECTS, CATALOG_NAMES } from '../config/objects.js?v=4';
+import { store } from '../core/store.js?v=4';
+import { esc, icon, plural } from '../core/ui.js?v=4';
+import { tg } from '../core/tg.js?v=4';
+import { track, EVENTS } from '../core/analytics.js?v=4';
+import { match, TYPE_LABEL, priceSources, fmtMln, objectCatalogs, minPrice } from '../core/match.js?v=4';
+import { objectCard, fineprint, header, photo, priceText } from './parts.js?v=4';
+import { openLeadSheet } from './lead.js?v=4';
+import { notFound } from './catalogs.js?v=4';
+import { promoFor } from '../config/promos.js?v=4';
 
 // Фон квиза меняется от шага к шагу — живая подложка для стеклянных вариантов ответа.
 const QUIZ_BG = ['palazzo', 'leeprime', 'kp540', 'volna', 'kedry'];
@@ -145,18 +145,19 @@ function summaryPills(answers) {
     .join('');
 }
 
+const TYPE_GEN = { flat: 'квартир', apartments: 'апартаментов', house: 'домов и таунхаусов', commercial: 'коммерческой недвижимости' };
+
+// Короткие тексты — не длиннее трёх строк на экране телефона.
 function intro(res, answers) {
-  const typeOpt = QUIZ[0].options.find((o) => o.value === answers.type);
   const nOpen = res.open.length;
   const nHidden = res.hidden.length;
+  const what = TYPE_GEN[answers.type] || 'объектов';
   if (res.mode === 'exact') {
-    const head = nOpen === 1 ? 'Один объект точно подходит под ваши параметры' : `${nOpen} ${plural(nOpen, ['объект', 'объекта', 'объектов'])} точно ${plural(nOpen, ['подходит', 'подходят', 'подходят'])} под ваши параметры`;
-    return `${head}${nHidden ? `. Ещё ${nHidden} стоит сравнить по расположению, цене и условиям покупки` : ''}.`;
+    const head = `${nOpen} ${plural(nOpen, ['объект подходит', 'объекта подходят', 'объектов подходят'])} под ваши параметры`;
+    return `${head}${nHidden ? `. Ещё ${nHidden} стоит сравнить по цене и условиям` : ''}.`;
   }
-  if (res.mode === 'near-budget') {
-    return `В бюджете «${res.budget.label}» формата «${typeOpt.label.toLowerCase()}» в текущих каталогах нет. Ниже — ближайшие по цене варианты; менеджер может поискать и за пределами каталогов.`;
-  }
-  return `Формат «${typeOpt.label.toLowerCase()}» в текущих каталогах не представлен — такие объекты подбираем индивидуально. Пока покажем, что есть под вашу цель и бюджет в других форматах.`;
+  if (res.mode === 'near-budget') return `В бюджете «${res.budget.label}» ${what} в каталогах нет. Вот ближайшие по цене варианты.`;
+  return `${what[0].toUpperCase()}${what.slice(1)} в каталогах нет — подберём индивидуально. Вот что подходит под вашу цель.`;
 }
 
 export function results() {
@@ -259,11 +260,11 @@ export function objectView({ id }) {
     hideNav: true,
     back: true,
     html: `
-    ${header({ title: o.name, right: `<a class="circle glass" href="#/" aria-label="На главную">${icon('home')}</a>` })}
-    <div class="d-hero">${photo(o.image, o.name, { eager: true })}</div>
+    ${header({ title: o.alias, right: `<a class="circle glass" href="#/" aria-label="На главную">${icon('home')}</a>` })}
+    <div class="d-hero">${photo(o.image, o.alias, { eager: true })}</div>
     <div class="d-sheet">
       <div class="kicker">${esc(kicker)}</div>
-      <h1 class="t-title">${esc(o.name)}</h1>
+      <h1 class="t-title">${esc(o.alias)}</h1>
       <p class="t-sub mt-8">${esc(o.location)}</p>
       <div class="d-price"><b>${priceText(o)}</b>${sources.length > 1 ? '<span>минимальная из каталогов</span>' : ''}</div>
 
@@ -274,9 +275,9 @@ export function objectView({ id }) {
         <div><dt>Локация</dt><dd>${esc(o.highlight.value)} ${esc(o.highlight.label)}</dd></div>
       </dl>
 
-      <p class="d-desc">${esc(o.description)}</p>
+      <p class="d-desc">${esc(o.about)}</p>
       ${promo ? `<div class="promo-box"><b>${esc(promo.title)}</b><p>${esc(promo.text)}</p><div class="src">Источник: ${esc(promo.source)}. Сроки и наличие уточняйте у менеджера.</div></div>` : ''}
-      <ul class="feats">${o.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+      <ul class="feats">${o.perks.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
       ${o.installment ? `<div class="note">${esc(o.installment)}</div>` : ''}
 
       ${sources.length ? `<h2 class="t-h2" style="margin-top:28px">Цена в каталогах</h2>
@@ -295,7 +296,7 @@ export function objectView({ id }) {
       track(EVENTS.RESULT_OBJECT_VIEW, { object: o.id, from: 'detail', price: minPrice(o) });
       root.querySelector('[data-action="lead"]').addEventListener('click', () => {
         track(EVENTS.LEAD_FORM_OPEN, { from: 'object', object: o.id });
-        openLeadSheet({ context: 'object', answers: store.answers, objectIds: [o.id], objectName: o.name });
+        openLeadSheet({ context: 'object', answers: store.answers, objectIds: [o.id] });
       });
     },
   };

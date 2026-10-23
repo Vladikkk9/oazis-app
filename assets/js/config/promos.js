@@ -31,14 +31,6 @@ export const PROMOS = [
     validUntil: null,
   },
   {
-    id: 'leeprime-views',
-    objectId: 'leeprime',
-    title: 'Старт продаж видовых лотов',
-    text: 'Апартаменты в 300 м от подъёмников Розы Хутор',
-    source: 'Каталог инвестора',
-    validUntil: null,
-  },
-  {
     id: 'skybreeze-vat',
     objectId: 'sky-breeze',
     title: 'Возможен возврат НДС',

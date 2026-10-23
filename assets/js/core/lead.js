@@ -1,9 +1,10 @@
 // Заявки. Формирует данные в формате, готовом для Битрикс24 (crm.lead.add),
 // и отправляет их на ВАШ серверный прокси. В прототипе endpoint не задан → демо-режим.
 
-import { APP } from '../config/app.js?v=3';
-import { QUIZ } from '../config/quiz.js?v=3';
-import { tg } from './tg.js?v=3';
+import { APP } from '../config/app.js?v=4';
+import { QUIZ } from '../config/quiz.js?v=4';
+import { tg } from './tg.js?v=4';
+import { OBJECTS } from '../config/objects.js?v=4';
 
 // Российские номера приводим к +7XXXXXXXXXX. intl: true — принимаем и зарубежные (номер из Telegram).
 export function normalizePhone(raw, { intl = false } = {}) {
@@ -58,7 +59,7 @@ export function buildLead({ name, phone, answers = {}, objectIds = [], context =
         viewing ? `Онлайн-показ: ${viewing.label} (${viewing.timezone}) — подтвердить с клиентом` : null,
         `Телефон: ${phoneSource === 'telegram' ? 'передан из Telegram' : 'введён вручную'}`,
         ...qa.filter((a) => a.value).map((a) => `${a.question} — ${a.label}`),
-        objectIds.length ? `Объекты: ${objectIds.join(', ')}` : null,
+        objectIds.length ? `Объекты: ${objectIds.map((id) => OBJECTS.find((o) => o.id === id)?.name || id).join(', ')}` : null,
         `Дата: ${createdAt}`,
       ].filter(Boolean).join('\n'),
     },

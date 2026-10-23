@@ -1,6 +1,6 @@
-import { AGENCY } from '../config/agency.js?v=3';
-import { esc, icon } from '../core/ui.js?v=3';
-import { header, photo } from './parts.js?v=3';
+import { AGENCY } from '../config/agency.js?v=4';
+import { esc, icon } from '../core/ui.js?v=4';
+import { header, photo } from './parts.js?v=4';
 
 export function about() {
   const c = AGENCY.contacts;
@@ -10,7 +10,7 @@ export function about() {
   return {
     tab: 'about',
     html: `
-    ${header({ title: 'Об агентстве', back: false })}
+    ${header({ title: 'Об агентстве', home: true })}
     <section class="about-hero">
       ${photo('assets/img/objects/leeprime.jpg', 'Роза Хутор', { eager: true })}
       <div class="panel glass-dark">

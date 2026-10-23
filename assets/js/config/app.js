@@ -18,7 +18,10 @@ export const APP = {
   // Сюда можно подключить Яндекс Метрику / собственный сервер (см. core/analytics.js).
   analytics: {
     debug: true,
+    // Номер счётчика Яндекс Метрики (metrika.yandex.ru → «Добавить счётчик», адрес сайта — vladikkk9.github.io).
+    // Например: yandexMetrikaId: 98765432,
     yandexMetrikaId: null,
+    webvisor: true, // запись сессий (Вебвизор)
   },
 
   // Онлайн-показ по видеосвязи. Это ПРЕДПОЧТИТЕЛЬНОЕ время клиента — менеджер подтверждает его сам.

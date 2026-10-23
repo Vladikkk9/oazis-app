@@ -11,6 +11,8 @@
 // rooms:  null, если количество комнат в каталоге не указано.
 // conflicts: расхождения между каталогами, которые показываем честно.
 
+import { PUBLIC } from './public.js?v=4';
+
 export const OBJECTS = [
   // ——— АЛТАЙ ———
   {
@@ -422,6 +424,16 @@ export const OBJECTS = [
     image: 'assets/img/objects/royalta.jpg',
   },
 ];
+
+// Публичные (нейтральные) названия и описания — см. public.js.
+for (const o of OBJECTS) {
+  const p = PUBLIC[o.id] || {};
+  o.alias = p.alias || o.format;
+  o.about = p.about || o.description;
+  o.perks = p.perks || o.features;
+  if (p.label) o.highlight = { ...o.highlight, label: p.label };
+  if (p.highlight) o.highlight = p.highlight;
+}
 
 export const CATALOG_NAMES = {
   'sochi-top10': 'ТОП-10 Сочи',

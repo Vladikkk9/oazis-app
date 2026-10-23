@@ -1,6 +1,6 @@
-import { POSTS } from '../config/posts.js?v=3';
-import { AGENCY } from '../config/agency.js?v=3';
-import { header, postRow, postHero } from './parts.js?v=3';
+import { POSTS } from '../config/posts.js?v=4';
+import { AGENCY } from '../config/agency.js?v=4';
+import { header, postRow, postHero } from './parts.js?v=4';
 
 export function read() {
   const withImg = POSTS.filter((p) => p.image);
@@ -8,7 +8,7 @@ export function read() {
   return {
     tab: 'read',
     html: `
-    ${header({ title: 'Читать', back: false })}
+    ${header({ title: 'Читать', home: true })}
     <div class="page-head">
       <h1 class="t-title">Рекомендуем прочитать</h1>
       <p class="t-body">Шесть материалов канала, с которых стоит начать знакомство с рынком курортной недвижимости.</p>
